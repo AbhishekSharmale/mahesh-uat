@@ -1,0 +1,14 @@
+name = "mission-police"
+compatibility_date = "2023-12-01"
+
+[build]
+command = "cd frontend && npm install && npm run build"
+cwd = "."
+watch_dir = "frontend/src"
+
+[build.upload]
+format = "directory"
+dir = "frontend/build"
+
+[[pages_build_output_dir]]
+value = "frontend/build"
