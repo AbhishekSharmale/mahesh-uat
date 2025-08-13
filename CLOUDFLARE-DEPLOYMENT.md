@@ -8,8 +8,8 @@
 ### Step 2: Cloudflare Pages Configuration
 
 **Build Settings:**
-- **Framework preset**: `Create React App`
-- **Build command**: `npm install && npm run build`
+- **Framework preset**: `None`
+- **Build command**: `npm install --legacy-peer-deps && npm run build`
 - **Build output directory**: `build`
 - **Root directory**: `frontend`
 
@@ -40,7 +40,7 @@ REACT_APP_RAZORPAY_KEY_ID=your_razorpay_key
    ```
    Project name: mission-police
    Production branch: master
-   Build command: npm install && npm run build
+   Build command: npm install --legacy-peer-deps && npm run build
    Build output directory: build
    Root directory: frontend
    ```
