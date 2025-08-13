@@ -9,9 +9,9 @@
 
 **Build Settings:**
 - **Framework preset**: `Create React App`
-- **Build command**: `cd frontend && npm install && npm run build`
-- **Build output directory**: `frontend/build`
-- **Root directory**: `/` (leave empty)
+- **Build command**: `npm install && npm run build`
+- **Build output directory**: `build`
+- **Root directory**: `frontend`
 
 ### Step 3: Environment Variables (Optional)
 If using Supabase, add these in Cloudflare Pages:
@@ -40,8 +40,9 @@ REACT_APP_RAZORPAY_KEY_ID=your_razorpay_key
    ```
    Project name: mission-police
    Production branch: master
-   Build command: cd frontend && npm install && npm run build
-   Build output directory: frontend/build
+   Build command: npm install && npm run build
+   Build output directory: build
+   Root directory: frontend
    ```
 
 4. **Deploy**
