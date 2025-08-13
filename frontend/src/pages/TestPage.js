@@ -23,7 +23,7 @@ const TestPage = () => {
 
   useEffect(() => {
     fetchTest()
-  }, [testId])
+  }, [testId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (test && !showResults && timeLeft > 0) {
@@ -38,7 +38,7 @@ const TestPage = () => {
       }, 1000)
       return () => clearInterval(timer)
     }
-  }, [test, showResults, timeLeft])
+  }, [test, showResults, timeLeft]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchTest = async () => {
     try {

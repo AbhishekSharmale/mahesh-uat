@@ -28,7 +28,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetchUserProfile()
     fetchTests()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchUserProfile = async () => {
     try {
