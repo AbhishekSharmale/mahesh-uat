@@ -14,11 +14,31 @@ export const useAuth = () => {
 }
 
 export const AuthProvider = ({ children }) => {
+  console.log('AuthProvider rendering')
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // Firebase auth listener
+    if (!auth) {
+      // Fallback to demo/supabase mode
+      if (!supabase) {
+        const demoUser = localStorage.getItem('demo_user')
+        if (demoUser) {
+          try {
+            setUser(JSON.parse(demoUser))
+          } catch (error) {
+            localStorage.removeItem('demo_user')
+            setUser(null)
+          }
+        } else {
+          setUser(null)
+        }
+      }
+      setLoading(false)
+      return
+    }
+    
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         setUser({
@@ -53,7 +73,9 @@ export const AuthProvider = ({ children }) => {
       setLoading(false)
     })
 
-    return () => unsubscribe()
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
   }, [])
 
   const value = {

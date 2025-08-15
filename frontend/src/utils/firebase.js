@@ -10,12 +10,34 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID
 }
 
-const app = initializeApp(firebaseConfig)
-export const auth = getAuth(app)
+let app = null
+let auth = null
 
-const googleProvider = new GoogleAuthProvider()
+try {
+  if (firebaseConfig.apiKey) {
+    app = initializeApp(firebaseConfig)
+    auth = getAuth(app)
+  }
+} catch (error) {
+  console.warn('Firebase initialization failed:', error)
+}
+
+export { auth }
+
+let googleProvider = null
+
+try {
+  if (auth) {
+    googleProvider = new GoogleAuthProvider()
+  }
+} catch (error) {
+  console.warn('GoogleAuthProvider initialization failed:', error)
+}
 
 export const signInWithGoogle = async () => {
+  if (!auth || !googleProvider) {
+    return { user: null, error: new Error('Firebase not initialized') }
+  }
   try {
     const result = await signInWithPopup(auth, googleProvider)
     return { user: result.user, error: null }
@@ -24,4 +46,7 @@ export const signInWithGoogle = async () => {
   }
 }
 
-export const signOut = () => auth.signOut()
+export const signOut = () => {
+  if (!auth) return Promise.resolve()
+  return auth.signOut()
+}

@@ -12,6 +12,7 @@ export const useLanguage = () => {
 }
 
 export const LanguageProvider = ({ children }) => {
+  console.log('LanguageProvider rendering')
   const [language, setLanguage] = useState(() => {
     try {
       return localStorage.getItem('app_language') || 'en'

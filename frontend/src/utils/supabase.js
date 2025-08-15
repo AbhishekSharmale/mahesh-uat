@@ -3,8 +3,17 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY
 
-// Demo mode for testing
-const isDemoMode = !supabaseUrl || supabaseUrl.includes('demo')
+// Demo mode for testing - check if URL is valid
+const isValidUrl = (url) => {
+  try {
+    new URL(url)
+    return true
+  } catch {
+    return false
+  }
+}
+
+const isDemoMode = !supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('demo') || supabaseUrl.includes('your_') || !isValidUrl(supabaseUrl)
 
 export const supabase = isDemoMode ? null : createClient(supabaseUrl, supabaseAnonKey)
 
