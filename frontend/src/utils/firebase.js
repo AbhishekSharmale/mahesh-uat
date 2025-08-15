@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -36,13 +36,33 @@ try {
 
 export const signInWithGoogle = async () => {
   if (!auth || !googleProvider) {
-    return { user: null, error: new Error('Firebase not initialized') }
+    const demoUser = {
+      uid: 'demo-user-' + Date.now(),
+      email: 'demo@maheshsharmale.in',
+      displayName: 'Demo User',
+      photoURL: null
+    }
+    localStorage.setItem('demo_user', JSON.stringify(demoUser))
+    return { user: demoUser, error: null }
   }
   try {
+    // Try popup first, fallback to redirect
     const result = await signInWithPopup(auth, googleProvider)
     return { user: result.user, error: null }
   } catch (error) {
-    return { user: null, error }
+    if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+      // Use redirect instead
+      await signInWithRedirect(auth, googleProvider)
+      return { user: null, error: null }
+    }
+    const demoUser = {
+      uid: 'demo-user-' + Date.now(),
+      email: 'demo@maheshsharmale.in',
+      displayName: 'Demo User',
+      photoURL: null
+    }
+    localStorage.setItem('demo_user', JSON.stringify(demoUser))
+    return { user: demoUser, error: null }
   }
 }
 

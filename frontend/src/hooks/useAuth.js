@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../utils/supabase'
 import { auth } from '../utils/firebase'
-import { onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged, getRedirectResult } from 'firebase/auth'
 
 const AuthContext = createContext()
 
@@ -19,6 +19,20 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Check for redirect result first
+    if (auth) {
+      getRedirectResult(auth).then((result) => {
+        if (result?.user) {
+          setUser({
+            id: result.user.uid,
+            email: result.user.email,
+            name: result.user.displayName,
+            avatar: result.user.photoURL
+          })
+        }
+      }).catch(console.error)
+    }
+    
     // Firebase auth listener
     if (!auth) {
       // Fallback to demo/supabase mode
