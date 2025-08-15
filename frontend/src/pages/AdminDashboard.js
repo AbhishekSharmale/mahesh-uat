@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabase'
-import { Users, BookOpen, DollarSign, TrendingUp, Plus, Settings, Calendar, Clock, Activity, UserCheck, Upload, Edit3, BarChart3, Zap } from 'lucide-react'
+import { Users, BookOpen, DollarSign, TrendingUp, Plus, Settings, Calendar, Clock, Activity, UserCheck, Upload, Edit3, BarChart3, Zap, Menu, X, ChevronLeft, ChevronRight, ArrowUp, ArrowDown } from 'lucide-react'
 
 // Check if admin is logged in
 const isAdminLoggedIn = () => localStorage.getItem('admin_logged_in') === 'true'
@@ -22,9 +22,23 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
   const [, setRefreshInterval] = useState(null)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const [activeDataTab, setActiveDataTab] = useState('users')
+  const [kpiScrollPosition, setKpiScrollPosition] = useState(0)
 
   // Check admin access
   const isAdmin = isAdminLoggedIn()
+
+  const scrollKpiCards = (direction) => {
+    const container = document.getElementById('kpi-container')
+    const scrollAmount = 280
+    const newPosition = direction === 'left' 
+      ? Math.max(0, kpiScrollPosition - scrollAmount)
+      : Math.min(container.scrollWidth - container.clientWidth, kpiScrollPosition + scrollAmount)
+    
+    container.scrollTo({ left: newPosition, behavior: 'smooth' })
+    setKpiScrollPosition(newPosition)
+  }
 
   useEffect(() => {
     if (!isAdmin) return
@@ -139,160 +153,235 @@ const AdminDashboard = () => {
 
   const renderOverview = () => (
     <>
-      {/* Live Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="card bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm opacity-90">Total Users</p>
-              <p className="text-3xl font-bold">{stats.totalUsers.toLocaleString()}</p>
-              <p className="text-xs opacity-75">+12% from last month</p>
-            </div>
-            <Users className="h-12 w-12 opacity-80" />
+      {/* Mobile KPI Cards with Scroll */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Key Metrics</h2>
+          <div className="flex space-x-2">
+            <button 
+              onClick={() => scrollKpiCards('left')}
+              className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              <ChevronLeft className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            </button>
+            <button 
+              onClick={() => scrollKpiCards('right')}
+              className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            </button>
           </div>
         </div>
         
-        <div className="card bg-gradient-to-r from-green-500 to-green-600 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm opacity-90">Live Users</p>
-              <p className="text-3xl font-bold">{stats.liveUsers}</p>
-              <p className="text-xs opacity-75">Currently online</p>
+        <div 
+          id="kpi-container"
+          className="flex space-x-4 overflow-x-auto scrollbar-hide pb-2"
+          style={{ scrollSnapType: 'x mandatory' }}
+        >
+          <div className="card min-w-[260px] bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4" style={{ scrollSnapAlign: 'start' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-1">
+                  <p className="text-xs opacity-90">Total Users</p>
+                  <div className="flex items-center text-green-300">
+                    <ArrowUp className="h-3 w-3" />
+                    <span className="text-xs">12%</span>
+                  </div>
+                </div>
+                <p className="text-2xl font-bold mb-1">{stats.totalUsers.toLocaleString()}</p>
+                <p className="text-xs opacity-75">vs last month</p>
+              </div>
+              <Users className="h-10 w-10 opacity-80" />
             </div>
-            <Activity className="h-12 w-12 opacity-80" />
           </div>
-        </div>
-        
-        <div className="card bg-gradient-to-r from-yellow-500 to-yellow-600 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm opacity-90">Today's Logins</p>
-              <p className="text-3xl font-bold">{stats.todayLogins}</p>
-              <p className="text-xs opacity-75">New sessions today</p>
+          
+          <div className="card min-w-[260px] bg-gradient-to-r from-green-500 to-green-600 text-white p-4" style={{ scrollSnapAlign: 'start' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-1">
+                  <p className="text-xs opacity-90">Live Users</p>
+                  <div className="flex items-center text-green-300">
+                    <ArrowUp className="h-3 w-3" />
+                    <span className="text-xs">5%</span>
+                  </div>
+                </div>
+                <p className="text-2xl font-bold mb-1">{stats.liveUsers}</p>
+                <p className="text-xs opacity-75">currently online</p>
+              </div>
+              <Activity className="h-10 w-10 opacity-80" />
             </div>
-            <Calendar className="h-12 w-12 opacity-80" />
           </div>
-        </div>
-        
-        <div className="card bg-gradient-to-r from-purple-500 to-purple-600 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm opacity-90">Tests Today</p>
-              <p className="text-3xl font-bold">{stats.testsToday}</p>
-              <p className="text-xs opacity-75">Attempts today</p>
+          
+          <div className="card min-w-[260px] bg-gradient-to-r from-yellow-500 to-yellow-600 text-white p-4" style={{ scrollSnapAlign: 'start' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-1">
+                  <p className="text-xs opacity-90">Today's Logins</p>
+                  <div className="flex items-center text-red-300">
+                    <ArrowDown className="h-3 w-3" />
+                    <span className="text-xs">3%</span>
+                  </div>
+                </div>
+                <p className="text-2xl font-bold mb-1">{stats.todayLogins}</p>
+                <p className="text-xs opacity-75">new sessions</p>
+              </div>
+              <Calendar className="h-10 w-10 opacity-80" />
             </div>
-            <Zap className="h-12 w-12 opacity-80" />
+          </div>
+          
+          <div className="card min-w-[260px] bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4" style={{ scrollSnapAlign: 'start' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-1">
+                  <p className="text-xs opacity-90">Tests Today</p>
+                  <div className="flex items-center text-green-300">
+                    <ArrowUp className="h-3 w-3" />
+                    <span className="text-xs">8%</span>
+                  </div>
+                </div>
+                <p className="text-2xl font-bold mb-1">{stats.testsToday}</p>
+                <p className="text-xs opacity-75">attempts today</p>
+              </div>
+              <Zap className="h-10 w-10 opacity-80" />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Secondary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="card text-center">
-          <BookOpen className="h-8 w-8 text-red-600 mx-auto mb-2" />
-          <p className="text-2xl font-bold text-gray-900">{stats.totalTests}</p>
-          <p className="text-sm text-gray-600">Total Tests</p>
+      {/* Secondary Stats - Compact Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+        <div className="card text-center p-3">
+          <BookOpen className="h-6 w-6 text-red-600 mx-auto mb-2" />
+          <p className="text-lg font-bold text-gray-900 dark:text-white">{stats.totalTests}</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Total Tests</p>
         </div>
         
-        <div className="card text-center">
-          <DollarSign className="h-8 w-8 text-green-600 mx-auto mb-2" />
-          <p className="text-2xl font-bold text-gray-900">₹{stats.totalRevenue.toLocaleString()}</p>
-          <p className="text-sm text-gray-600">Total Revenue</p>
+        <div className="card text-center p-3">
+          <DollarSign className="h-6 w-6 text-green-600 mx-auto mb-2" />
+          <p className="text-lg font-bold text-gray-900 dark:text-white">₹{stats.totalRevenue.toLocaleString()}</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Revenue</p>
         </div>
         
-        <div className="card text-center">
-          <UserCheck className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-          <p className="text-2xl font-bold text-gray-900">{stats.activeUsers}</p>
-          <p className="text-sm text-gray-600">Active Users</p>
+        <div className="card text-center p-3">
+          <UserCheck className="h-6 w-6 text-blue-600 mx-auto mb-2" />
+          <p className="text-lg font-bold text-gray-900 dark:text-white">{stats.activeUsers}</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Active Users</p>
         </div>
         
-        <div className="card text-center">
-          <BarChart3 className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-          <p className="text-2xl font-bold text-gray-900">{stats.avgScore}</p>
-          <p className="text-sm text-gray-600">Avg Score</p>
+        <div className="card text-center p-3">
+          <BarChart3 className="h-6 w-6 text-purple-600 mx-auto mb-2" />
+          <p className="text-lg font-bold text-gray-900 dark:text-white">{stats.avgScore}</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Avg Score</p>
         </div>
       </div>
 
-      {/* Live Activity Dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Recent Users */}
-        <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <Users className="h-5 w-5 mr-2" />
-            Live Users
-          </h3>
-          <div className="space-y-3 max-h-80 overflow-y-auto">
-            {recentUsers.map(user => (
-              <div key={user.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center">
-                  <div className={`w-3 h-3 rounded-full mr-3 ${
-                    user.status === 'online' ? 'bg-green-500' : 
-                    user.status === 'away' ? 'bg-yellow-500' : 'bg-gray-400'
-                  }`}></div>
-                  <div>
-                    <p className="font-medium text-gray-900">{user.name}</p>
-                    <p className="text-sm text-gray-600">{user.tests_taken} tests • ₹{user.wallet_balance}</p>
+      {/* Data Tabs - Mobile */}
+      <div className="mb-6">
+        <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+          {[
+            { id: 'users', label: 'Live Users', icon: Users },
+            { id: 'tests', label: 'Popular Tests', icon: TrendingUp },
+            { id: 'performers', label: 'Top Performers', icon: BarChart3 }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveDataTab(tab.id)}
+              className={`flex-1 flex items-center justify-center space-x-2 py-2 px-3 rounded-md font-medium text-sm transition-all ${
+                activeDataTab === tab.id
+                  ? 'bg-white dark:bg-gray-700 text-primary shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+              }`}
+            >
+              <tab.icon className="h-4 w-4" />
+              <span className="hidden sm:inline">{tab.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      {/* Data Content */}
+      <div className="mb-8">
+        {activeDataTab === 'users' && (
+          <div className="card">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <Users className="h-5 w-5 mr-2" />
+              Live Users
+            </h3>
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {recentUsers.map(user => (
+                <div key={user.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="flex items-center">
+                    <div className={`w-3 h-3 rounded-full mr-3 ${
+                      user.status === 'online' ? 'bg-green-500' : 
+                      user.status === 'away' ? 'bg-yellow-500' : 'bg-gray-400'
+                    }`}></div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">{user.name}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{user.tests_taken} tests • ₹{user.wallet_balance}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-500">{user.last_login}</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs text-gray-500">{user.last_login}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         
-        {/* Popular Tests */}
-        <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <TrendingUp className="h-5 w-5 mr-2" />
-            Popular Tests
-          </h3>
-          <div className="space-y-3 max-h-80 overflow-y-auto">
-            {recentTests.map(test => (
-              <div key={test.id} className="p-3 bg-gray-50 rounded-lg">
-                <div className="flex justify-between items-start mb-2">
-                  <p className="font-medium text-gray-900 text-sm">{test.title}</p>
-                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">{test.category}</span>
+        {activeDataTab === 'tests' && (
+          <div className="card">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <TrendingUp className="h-5 w-5 mr-2" />
+              Popular Tests
+            </h3>
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {recentTests.map(test => (
+                <div key={test.id} className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="flex justify-between items-start mb-2">
+                    <p className="font-medium text-gray-900 dark:text-white text-sm">{test.title}</p>
+                    <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">{test.category}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                    <span>{test.attempts} attempts</span>
+                    <span>Avg: {test.avg_score}/10</span>
+                    <span className="text-green-600 font-medium">₹{test.revenue}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>{test.attempts} attempts</span>
-                  <span>Avg: {test.avg_score}/10</span>
-                  <span className="text-green-600 font-medium">₹{test.revenue}</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         
-        {/* Top Performers */}
-        <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <BarChart3 className="h-5 w-5 mr-2" />
-            Top Performers
-          </h3>
-          <div className="space-y-3 max-h-80 overflow-y-auto">
-            {topPerformers.map((performer, index) => (
-              <div key={performer.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white mr-3 ${
-                    index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-500' : 'bg-blue-500'
-                  }`}>
-                    {index + 1}
+        {activeDataTab === 'performers' && (
+          <div className="card">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <BarChart3 className="h-5 w-5 mr-2" />
+              Top Performers
+            </h3>
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {topPerformers.map((performer, index) => (
+                <div key={performer.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="flex items-center">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white mr-3 ${
+                      index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-500' : 'bg-blue-500'
+                    }`}>
+                      {index + 1}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">{performer.name}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{performer.tests_completed} tests</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">{performer.name}</p>
-                    <p className="text-sm text-gray-600">{performer.tests_completed} tests</p>
+                  <div className="text-right">
+                    <p className="font-bold text-green-600">{performer.avg_score}/10</p>
+                    <p className="text-xs text-gray-500">{performer.total_spent}</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold text-green-600">{performer.avg_score}/10</p>
-                  <p className="text-xs text-gray-500">₹{performer.total_spent}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   )
@@ -310,25 +399,33 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      {/* Mobile Header */}
+      <header className="bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Admin Control Panel</h1>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <div className="flex items-center space-x-3">
+              <button 
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                {showMobileMenu ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+              <h1 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Admin Panel</h1>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 text-xs text-gray-600 dark:text-gray-400">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span>Live</span>
+                <span className="hidden sm:inline">Live</span>
               </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Clock className="h-4 w-4" />
-                <span>Updated: {new Date().toLocaleTimeString()}</span>
+              <div className="hidden sm:flex items-center space-x-1 text-xs text-gray-600 dark:text-gray-400">
+                <Clock className="h-3 w-3" />
+                <span>{new Date().toLocaleTimeString()}</span>
               </div>
             </div>
           </div>
           
-          {/* Navigation Tabs */}
-          <div className="mt-4 border-b border-gray-200">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:block mt-4 border-b border-gray-200 dark:border-gray-700">
             <nav className="flex space-x-8">
               {[
                 { id: 'overview', label: 'Live Overview', icon: Activity },
@@ -343,7 +440,7 @@ const AdminDashboard = () => {
                   className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                     activeTab === tab.id
                       ? 'border-primary text-primary'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                   }`}
                 >
                   <tab.icon className="h-4 w-4" />
@@ -353,6 +450,37 @@ const AdminDashboard = () => {
             </nav>
           </div>
         </div>
+        
+        {/* Mobile Menu */}
+        {showMobileMenu && (
+          <div className="lg:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+            <nav className="px-4 py-2 space-y-1">
+              {[
+                { id: 'overview', label: 'Live Overview', icon: Activity },
+                { id: 'tests', label: 'Test Management', icon: BookOpen },
+                { id: 'users', label: 'User Analytics', icon: Users },
+                { id: 'revenue', label: 'Revenue Reports', icon: DollarSign },
+                { id: 'settings', label: 'Settings', icon: Settings }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id)
+                    setShowMobileMenu(false)
+                  }}
+                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg font-medium text-sm ${
+                    activeTab === tab.id
+                      ? 'bg-primary text-white'
+                      : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  <tab.icon className="h-4 w-4" />
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </nav>
+          </div>
+        )}
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6">
@@ -410,6 +538,13 @@ const AdminDashboard = () => {
           </div>
         )}
       </main>
+      
+      {/* Floating Action Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button className="bg-primary hover:bg-blue-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110">
+          <Plus className="h-6 w-6" />
+        </button>
+      </div>
     </div>
   )
 }
