@@ -21,7 +21,8 @@ const Home = () => {
         toast.success(getTranslation('loginSuccess', language) || 'Login successful!')
       }
     } catch (error) {
-      toast.error(getTranslation('loginFailed', language))
+      console.error('Login error:', error)
+      toast.error(`Login failed: ${error.message}`)
     }
   }
 
