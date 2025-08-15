@@ -36,33 +36,17 @@ try {
 
 export const signInWithGoogle = async () => {
   if (!auth || !googleProvider) {
-    const demoUser = {
-      uid: 'demo-user-' + Date.now(),
-      email: 'demo@maheshsharmale.in',
-      displayName: 'Demo User',
-      photoURL: null
-    }
-    localStorage.setItem('demo_user', JSON.stringify(demoUser))
-    return { user: demoUser, error: null }
+    throw new Error('Firebase not initialized')
   }
   try {
-    // Try popup first, fallback to redirect
     const result = await signInWithPopup(auth, googleProvider)
     return { user: result.user, error: null }
   } catch (error) {
-    if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
-      // Use redirect instead
+    if (error.code === 'auth/popup-blocked') {
       await signInWithRedirect(auth, googleProvider)
       return { user: null, error: null }
     }
-    const demoUser = {
-      uid: 'demo-user-' + Date.now(),
-      email: 'demo@maheshsharmale.in',
-      displayName: 'Demo User',
-      photoURL: null
-    }
-    localStorage.setItem('demo_user', JSON.stringify(demoUser))
-    return { user: demoUser, error: null }
+    throw error
   }
 }
 

@@ -33,22 +33,7 @@ export const AuthProvider = ({ children }) => {
       }).catch(console.error)
     }
     
-    // Firebase auth listener
     if (!auth) {
-      // Fallback to demo/supabase mode
-      if (!supabase) {
-        const demoUser = localStorage.getItem('demo_user')
-        if (demoUser) {
-          try {
-            setUser(JSON.parse(demoUser))
-          } catch (error) {
-            localStorage.removeItem('demo_user')
-            setUser(null)
-          }
-        } else {
-          setUser(null)
-        }
-      }
       setLoading(false)
       return
     }
