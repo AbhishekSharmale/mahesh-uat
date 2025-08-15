@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../utils/supabase'
 import { Users, BookOpen, DollarSign, TrendingUp, Plus, Settings, Calendar, Clock, Activity, UserCheck, Upload, Edit3, BarChart3, Zap } from 'lucide-react'
 
