@@ -38,7 +38,7 @@ const TestPage = () => {
       }, 1000)
       return () => clearInterval(timer)
     }
-  }, [test, showResults, timeLeft]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [test, showResults]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchTest = async () => {
     try {
@@ -62,7 +62,12 @@ const TestPage = () => {
         .single()
 
       if (error) throw error
-      setTest(data)
+      if (data) {
+        setTest(data)
+      } else {
+        toast.error('Test not found')
+        navigate('/dashboard')
+      }
     } catch (error) {
       toast.error('Failed to load test')
       navigate('/dashboard')
@@ -153,7 +158,7 @@ const TestPage = () => {
               <h2 className="text-2xl font-bold text-gray-900 mb-2">{getTranslation('testCompleted', language)}</h2>
               <p className="text-4xl font-bold text-primary mb-2">{score.toFixed(1)}%</p>
               <p className="text-gray-600">
-                {getTranslation('youScored', language)} {Math.round(score/10)} {getTranslation('outOf', language)} {test.questions.length} {getTranslation('questionsCorrectly', language)}
+                {getTranslation('youScored', language)} {Math.round((score/100) * test.questions.length)} {getTranslation('outOf', language)} {test.questions.length} {getTranslation('questionsCorrectly', language)}
               </p>
             </div>
             <button

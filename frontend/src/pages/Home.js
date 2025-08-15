@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
-import { signInWithGoogle } from '../utils/supabase'
+import { signInWithGoogle } from '../utils/firebase'
 import { BookOpen, Shield, Trophy, Users } from 'lucide-react'
 import toast from 'react-hot-toast'
 import LanguageToggle from '../components/LanguageToggle'
@@ -15,15 +15,23 @@ const Home = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      const { error } = await signInWithGoogle()
+      const { user, error } = await signInWithGoogle()
       if (error) throw error
+      if (user) {
+        toast.success(getTranslation('loginSuccess', language) || 'Login successful!')
+      }
     } catch (error) {
       toast.error(getTranslation('loginFailed', language))
     }
   }
 
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard')
+    }
+  }, [user, navigate])
+
   if (user) {
-    navigate('/dashboard')
     return null
   }
 

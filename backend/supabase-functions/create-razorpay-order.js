@@ -14,9 +14,23 @@ serve(async (req) => {
   try {
     const { amount, testId } = await req.json()
     
+    // Input validation
+    if (!amount || amount <= 0) {
+      throw new Error('Invalid amount')
+    }
+    
+    if (!testId) {
+      throw new Error('Test ID is required')
+    }
+    
     // Initialize Razorpay
     const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID')
     const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET')
+    
+    // Environment variable validation
+    if (!razorpayKeyId || !razorpayKeySecret) {
+      throw new Error('Razorpay configuration missing')
+    }
     
     const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`)
     

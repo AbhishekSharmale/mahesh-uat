@@ -64,12 +64,12 @@ const AdminDashboard = () => {
       category: test?.category || 'gk',
       price: test?.price || 10,
       published: test?.published || false,
-      questions: test?.questions || Array(10).fill({
+      questions: test?.questions || Array.from({ length: 10 }, () => ({
         question: '',
         options: ['', '', '', ''],
         correct: 0,
         explanation: ''
-      })
+      }))
     })
 
     const handleQuestionChange = (index, field, value) => {
@@ -153,7 +153,10 @@ const AdminDashboard = () => {
                   <input
                     type="number"
                     value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) })}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0
+                      setFormData({ ...formData, price: value })
+                    }}
                     className="input-field"
                     min="1"
                     required

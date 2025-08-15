@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../utils/supabase'
+import { auth } from '../utils/firebase'
+import { onAuthStateChanged } from 'firebase/auth'
 
 const AuthContext = createContext()
 
@@ -16,41 +18,59 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!supabase) {
-      // Demo mode
-      const demoUser = localStorage.getItem('demo_user')
-      setUser(demoUser ? JSON.parse(demoUser) : null)
-      setLoading(false)
-      return
-    }
-
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+    // Firebase auth listener
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser({
+          id: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName,
+          avatar: firebaseUser.photoURL
+        })
+      } else {
+        // Fallback to demo mode or Supabase
+        if (!supabase) {
+          const demoUser = localStorage.getItem('demo_user')
+          if (demoUser) {
+            try {
+              setUser(JSON.parse(demoUser))
+            } catch (error) {
+              localStorage.removeItem('demo_user')
+              setUser(null)
+            }
+          } else {
+            setUser(null)
+          }
+        } else {
+          supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null)
+          }).catch((error) => {
+            console.error('Auth session error:', error)
+            setUser(null)
+          })
+        }
+      }
       setLoading(false)
     })
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null)
-        setLoading(false)
-      }
-    )
-
-    return () => subscription.unsubscribe()
+    return () => unsubscribe()
   }, [])
 
   const value = {
     user,
     loading,
-    signOut: () => {
-      if (!supabase) {
-        localStorage.removeItem('demo_user')
+    signOut: async () => {
+      try {
+        await auth.signOut()
+        if (!supabase) {
+          localStorage.removeItem('demo_user')
+        } else {
+          await supabase.auth.signOut()
+        }
         setUser(null)
-        return Promise.resolve()
+      } catch (error) {
+        console.error('Sign out error:', error)
       }
-      return supabase.auth.signOut()
     }
   }
 
