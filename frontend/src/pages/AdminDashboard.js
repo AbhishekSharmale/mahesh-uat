@@ -7,7 +7,6 @@ import { Users, BookOpen, DollarSign, TrendingUp, Plus, Settings, Calendar, Cloc
 const isAdminLoggedIn = () => localStorage.getItem('admin_logged_in') === 'true'
 
 const AdminDashboard = () => {
-  const { } = useAuth()
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalTests: 0,
