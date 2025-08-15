@@ -10,9 +10,9 @@ const Footer = () => {
             Contact Support
           </a>
           <span>•</span>
-          <a href="#" className="hover:text-primary transition-colors duration-200">
+          <button className="hover:text-primary transition-colors duration-200">
             Privacy Policy
-          </a>
+          </button>
         </div>
         <div className="flex items-center justify-center space-x-2 text-xs text-gray-500 dark:text-gray-500">
           <span>Built by</span>
