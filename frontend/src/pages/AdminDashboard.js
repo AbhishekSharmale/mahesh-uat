@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../utils/supabase'
-import { Users, BookOpen, DollarSign, TrendingUp, Plus, Settings, Eye, Calendar, Clock, Activity, UserCheck, Upload, Edit3, BarChart3, Zap } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { Users, BookOpen, DollarSign, TrendingUp, Plus, Settings, Calendar, Clock, Activity, UserCheck, Upload, Edit3, BarChart3, Zap } from 'lucide-react'
 
 // Check if admin is logged in
 const isAdminLoggedIn = () => localStorage.getItem('admin_logged_in') === 'true'
 
 const AdminDashboard = () => {
-  const { user } = useAuth()
+  const { } = useAuth()
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalTests: 0,
@@ -24,7 +23,7 @@ const AdminDashboard = () => {
   const [topPerformers, setTopPerformers] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')
-  const [refreshInterval, setRefreshInterval] = useState(null)
+  const [, setRefreshInterval] = useState(null)
 
   // Check admin access
   const isAdmin = isAdminLoggedIn()
@@ -32,10 +31,20 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (!isAdmin) return
 
-    fetchAllData()
+    const fetchData = async () => {
+      await Promise.all([
+        fetchStats(),
+        fetchRecentUsers(),
+        fetchRecentTests(),
+        fetchTopPerformers()
+      ])
+      setLoading(false)
+    }
+
+    fetchData()
     
     // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchAllData, 30000)
+    const interval = setInterval(fetchData, 30000)
     setRefreshInterval(interval)
     
     return () => {
@@ -43,15 +52,7 @@ const AdminDashboard = () => {
     }
   }, [isAdmin])
 
-  const fetchAllData = async () => {
-    await Promise.all([
-      fetchStats(),
-      fetchRecentUsers(),
-      fetchRecentTests(),
-      fetchTopPerformers()
-    ])
-    setLoading(false)
-  }
+
 
   const fetchStats = async () => {
     try {
