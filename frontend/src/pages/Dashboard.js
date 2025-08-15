@@ -182,7 +182,7 @@ const Dashboard = () => {
           </div>
           <div className="card text-center md:col-span-1 col-span-2">
             <User className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-            <p className="text-lg font-medium text-gray-900">{userProfile?.name}</p>
+            <p className="text-lg font-medium text-gray-900">{user?.name || userProfile?.name || 'User'}</p>
             <p className="text-sm text-gray-600">Welcome back!</p>
           </div>
         </div>
