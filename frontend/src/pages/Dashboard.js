@@ -144,20 +144,20 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gray-900">{getTranslation('dashboard', language)}</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{getTranslation('dashboard', language)}</h1>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <CreditCard className="h-5 w-5 text-gray-600" />
-                <span className="font-medium">₹{userProfile?.wallet_balance || 0}</span>
+                <span className="font-medium text-gray-900 dark:text-white">₹{userProfile?.wallet_balance || 0}</span>
               </div>
               <button
                 onClick={signOut}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200"
               >
                 <LogOut className="h-5 w-5" />
                 <span>Logout</span>
@@ -172,24 +172,24 @@ const Dashboard = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <div className="card text-center">
             <Trophy className="h-8 w-8 text-primary mx-auto mb-2" />
-            <p className="text-2xl font-bold text-gray-900">{userProfile?.tests_taken || 0}</p>
-            <p className="text-sm text-gray-600">Tests Taken</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{userProfile?.tests_taken || 0}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Tests Taken</p>
           </div>
           <div className="card text-center">
             <CreditCard className="h-8 w-8 text-green-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-gray-900">₹{userProfile?.wallet_balance || 0}</p>
-            <p className="text-sm text-gray-600">Wallet Balance</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">₹{userProfile?.wallet_balance || 0}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Wallet Balance</p>
           </div>
           <div className="card text-center md:col-span-1 col-span-2">
             <User className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-            <p className="text-lg font-medium text-gray-900">{user?.name || userProfile?.name || 'User'}</p>
-            <p className="text-sm text-gray-600">Welcome back!</p>
+            <p className="text-lg font-medium text-gray-900 dark:text-white">{user?.name || userProfile?.name || 'User'}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Welcome back!</p>
           </div>
         </div>
 
         {/* Category Filter */}
         <div className="card mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Browse Tests</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Browse Tests</h3>
           <div className="flex flex-wrap gap-2">
             {categories.map(category => (
               <button
@@ -212,7 +212,7 @@ const Dashboard = () => {
           {filteredTests.map(test => (
             <div key={test.id} className="card">
               <div className="flex justify-between items-start mb-3">
-                <h4 className="font-semibold text-gray-900">
+                <h4 className="font-semibold text-gray-900 dark:text-white">
                   {language === 'mr' && test.titleMr ? test.titleMr : test.title}
                 </h4>
                 <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
@@ -220,7 +220,7 @@ const Dashboard = () => {
                 </span>
               </div>
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
                   <span>10 Questions</span>
                   <span>10 Minutes</span>
                 </div>
