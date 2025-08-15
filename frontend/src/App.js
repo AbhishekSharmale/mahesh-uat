@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import TestPage from './pages/TestPage'
 import AdminDashboard from './pages/AdminDashboard'
+import AdminLogin from './pages/AdminLogin'
 import ProtectedRoute from './components/ProtectedRoute'
 import ErrorBoundary from './components/ErrorBoundary'
 
@@ -53,11 +54,8 @@ function AppContent() {
               <TestPage />
             </ProtectedRoute>
           } />
-          <Route path="/admin" element={
-            <ProtectedRoute adminOnly>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
         <Toaster position="top-center" />
       </div>

@@ -4,8 +4,8 @@ import { supabase } from '../utils/supabase'
 import { Users, BookOpen, DollarSign, TrendingUp, Plus, Settings, Eye, Calendar, Clock, Activity, UserCheck, Upload, Edit3, BarChart3, Zap } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-// Check if admin is logged in
-const isAdminLoggedIn = () => localStorage.getItem('admin_logged_in') === 'true'
+// Admin email whitelist
+const ADMIN_EMAILS = ['admin1@example.com', 'admin2@example.com'] // Replace with your admin emails
 
 const AdminDashboard = () => {
   const { user } = useAuth()
@@ -27,7 +27,7 @@ const AdminDashboard = () => {
   const [refreshInterval, setRefreshInterval] = useState(null)
 
   // Check admin access
-  const isAdmin = isAdminLoggedIn()
+  const isAdmin = ADMIN_EMAILS.includes(user?.email)
 
   useEffect(() => {
     if (!isAdmin) return

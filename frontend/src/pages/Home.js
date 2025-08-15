@@ -54,6 +54,12 @@ const Home = () => {
               >
                 {getTranslation('loginWithGoogle', language)}
               </button>
+              <button
+                onClick={() => navigate('/admin')}
+                className="btn-secondary text-sm"
+              >
+                Admin
+              </button>
             </div>
           </div>
         </div>
