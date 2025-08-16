@@ -74,14 +74,6 @@ const WalletModal = ({ isOpen, onClose, user, onBalanceUpdate }) => {
     }
   }
 
-  const simulatePayment = async (amount) => {
-    // For demo mode without Supabase
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    onBalanceUpdate(amount)
-    toast.success(`₹${amount} added to wallet successfully!`)
-    onClose()
-  }
-
   if (!isOpen) return null
 
   return (
