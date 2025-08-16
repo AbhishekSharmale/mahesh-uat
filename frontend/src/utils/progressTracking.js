@@ -122,7 +122,14 @@ export const getUserStats = async (userId) => {
     const demoResults = JSON.parse(localStorage.getItem('demo_test_results') || '[]')
     const userResults = demoResults.filter(result => result.user_id === userId)
     
-    if (userResults.length === 0) {
+    // Also get from demo profile
+    const demoProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
+    const profileTestsCount = demoProfile.tests_taken || 0
+    
+    // Use the higher count (in case of sync issues)
+    const testsCompleted = Math.max(userResults.length, profileTestsCount)
+    
+    if (testsCompleted === 0) {
       return {
         testsCompleted: 0,
         averageScore: 0,
@@ -133,11 +140,12 @@ export const getUserStats = async (userId) => {
       }
     }
     
-    const testsCompleted = userResults.length
     const totalScore = userResults.reduce((sum, result) => sum + result.score, 0)
     const totalPossible = userResults.reduce((sum, result) => sum + result.total_questions, 0)
     const averageScore = totalPossible > 0 ? (totalScore / totalPossible * 10) : 0
     const totalPoints = totalScore * 10
+    
+
     
     return {
       testsCompleted,
@@ -242,6 +250,7 @@ export const recordTestCompletion = async (userId, testId, score, totalQuestions
       const demoProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
       demoProfile.tests_taken = (demoProfile.tests_taken || 0) + 1
       localStorage.setItem('demo_user', JSON.stringify(demoProfile))
+
     }
 
     return { success: true, data }

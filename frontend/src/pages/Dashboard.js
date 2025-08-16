@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 import { demoTests } from '../utils/demoData'
 import { getTranslation } from '../utils/i18n'
 import { getUserProgress, getRecentTests, getUserStats, recordTestCompletion } from '../utils/progressTracking'
+import { hasAccessToTest, purchaseTest } from '../utils/purchaseTracking'
 import WalletModal from '../components/WalletModal'
 
 const Dashboard = () => {
@@ -100,14 +101,19 @@ const Dashboard = () => {
       if (!supabase) {
         // Demo mode - start with zero balance
         // Get demo profile from localStorage or create new
-        const demoProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
-        setUserProfile({
-          id: demoProfile.id || 'demo-user',
-          name: demoProfile.name || 'Demo User',
-          email: demoProfile.email || 'demo@test.com',
-          wallet_balance: demoProfile.wallet_balance || 0,
-          tests_taken: demoProfile.tests_taken || 0
-        })
+        let demoProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
+        if (!demoProfile.id) {
+          demoProfile = {
+            id: 'demo-user-123',
+            name: 'Demo User',
+            email: 'demo@test.com',
+            wallet_balance: 0,
+            tests_taken: 0
+          }
+          localStorage.setItem('demo_user', JSON.stringify(demoProfile))
+        }
+
+        setUserProfile(demoProfile)
         return
       }
 
@@ -172,6 +178,15 @@ const Dashboard = () => {
 
   const handleBuyTest = async (testId, price) => {
     try {
+      const userId = user?.id || 'demo-user-123'
+      
+      // Check if user already has access to this test
+      if (hasAccessToTest(userId, testId)) {
+        navigate(`/test/${testId}`)
+        toast.success('Accessing your purchased test!')
+        return
+      }
+      
       // Check if user has enough balance
       if ((userProfile?.wallet_balance || 0) < price) {
         toast.error('Insufficient balance. Please add money to wallet.')
@@ -179,18 +194,34 @@ const Dashboard = () => {
         return
       }
 
+      // Deduct balance and record purchase
+      const newBalance = userProfile.wallet_balance - price
+      
       if (!supabase) {
-        // Demo mode - simulate purchase
+        // Demo mode - update localStorage immediately
+        const demoProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
+        demoProfile.wallet_balance = newBalance
+        localStorage.setItem('demo_user', JSON.stringify(demoProfile))
+        
+        // Update UI state
+        setUserProfile(prev => ({
+          ...prev,
+          wallet_balance: newBalance
+        }))
+        
+        // Record the purchase
+        purchaseTest(userId, testId, price)
+        
         navigate(`/test/${testId}`)
-        toast.success('Test purchased successfully!')
+        toast.success('Test purchased successfully! You now have lifetime access.')
         return
       }
 
-      // Deduct balance and unlock test
+      // Supabase mode - deduct balance
       const { error } = await supabase
         .from('profiles')
         .update({ 
-          wallet_balance: userProfile.wallet_balance - price,
+          wallet_balance: newBalance,
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id)
@@ -198,22 +229,19 @@ const Dashboard = () => {
       if (error) throw error
 
       // Update local state
-      setUserProfile(prev => {
-        const updated = {
-          ...prev,
-          wallet_balance: prev.wallet_balance - price
-        }
-        // Update localStorage for demo mode
-        if (!supabase) {
-          localStorage.setItem('demo_user', JSON.stringify(updated))
-        }
-        return updated
-      })
+      setUserProfile(prev => ({
+        ...prev,
+        wallet_balance: newBalance
+      }))
+
+      // Record the purchase
+      purchaseTest(userId, testId, price)
 
       // Navigate to test
       navigate(`/test/${testId}`)
-      toast.success('Test purchased successfully!')
+      toast.success('Test purchased successfully! You now have lifetime access.')
     } catch (error) {
+
       toast.error('Purchase failed. Please try again.')
     }
   }
@@ -247,7 +275,12 @@ const Dashboard = () => {
           // Force UI update by refreshing profile from localStorage
           if (!supabase) {
             const updatedProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
+
             setUserProfile(updatedProfile)
+            
+            // Also refresh userStats
+            const newStats = await getUserStats(user.id)
+            setUserStats(newStats)
           }
           
           toast.success('Test completed! Progress updated.')
@@ -260,7 +293,14 @@ const Dashboard = () => {
     return () => {
       delete window.handleTestCompletion
     }
-  }) // Remove dependencies to avoid re-creation
+  })
+  
+  // Refresh data when userProfile changes
+  React.useEffect(() => {
+    if (userProfile && user) {
+      fetchUserStats()
+    }
+  }, [userProfile]) // Remove dependencies to avoid re-creation
 
 
 
@@ -468,9 +508,16 @@ const Dashboard = () => {
                   </button>
                   <button
                     onClick={() => handleBuyTest(test.id, test.price)}
-                    className="flex-1 bg-gradient-to-r from-primary to-blue-600 text-white py-3 rounded-xl font-bold text-base shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
+                    className={`flex-1 py-3 rounded-xl font-bold text-base shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 ${
+                      hasAccessToTest(user?.id || 'demo-user-123', test.id)
+                        ? 'bg-gradient-to-r from-green-500 to-green-600 text-white'
+                        : 'bg-gradient-to-r from-primary to-blue-600 text-white'
+                    }`}
                   >
-                    Buy & Take Test →
+                    {hasAccessToTest(user?.id || 'demo-user-123', test.id) 
+                      ? 'Take Test →' 
+                      : 'Buy & Take Test →'
+                    }
                   </button>
                 </div>
               </div>

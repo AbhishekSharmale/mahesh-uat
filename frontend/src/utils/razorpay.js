@@ -27,7 +27,6 @@ export const initiatePayment = async ({
     
     // Use live or test key based on environment
     const razorpayKey = process.env.REACT_APP_RAZORPAY_KEY_ID || 'rzp_live_R66OhBTgwnZzVP'
-    console.log('Razorpay Key:', razorpayKey)
 
     const options = {
       key: razorpayKey, // Your Razorpay Key ID
