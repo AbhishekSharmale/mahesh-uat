@@ -232,7 +232,7 @@ const Dashboard = () => {
     return () => {
       delete window.handleTestCompletion
     }
-  }, [user])
+  }, [user, fetchUserProgress, fetchUserStats, fetchRecentTestsData, fetchUserProfile])
 
 
 

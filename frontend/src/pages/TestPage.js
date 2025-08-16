@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
+// import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
 import { supabase } from '../utils/supabase'
 import { Clock, CheckCircle, XCircle } from 'lucide-react'
@@ -10,7 +10,6 @@ import { getTranslation } from '../utils/i18n'
 
 const TestPage = () => {
   const { testId } = useParams()
-  const { user } = useAuth()
   const { language } = useLanguage()
   const navigate = useNavigate()
   const [test, setTest] = useState(null)
