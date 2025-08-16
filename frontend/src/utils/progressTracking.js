@@ -237,9 +237,9 @@ export const recordTestCompletion = async (userId, testId, score, totalQuestions
     // Update user profile stats
     await updateUserProfile(userId)
     
-    // Also update localStorage for demo tracking
-    const demoProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
-    if (demoProfile.id) {
+    // Update localStorage for demo tracking
+    if (!supabase) {
+      const demoProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
       demoProfile.tests_taken = (demoProfile.tests_taken || 0) + 1
       localStorage.setItem('demo_user', JSON.stringify(demoProfile))
     }

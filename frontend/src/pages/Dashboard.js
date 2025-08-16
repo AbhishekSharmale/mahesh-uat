@@ -198,10 +198,17 @@ const Dashboard = () => {
       if (error) throw error
 
       // Update local state
-      setUserProfile(prev => ({
-        ...prev,
-        wallet_balance: prev.wallet_balance - price
-      }))
+      setUserProfile(prev => {
+        const updated = {
+          ...prev,
+          wallet_balance: prev.wallet_balance - price
+        }
+        // Update localStorage for demo mode
+        if (!supabase) {
+          localStorage.setItem('demo_user', JSON.stringify(updated))
+        }
+        return updated
+      })
 
       // Navigate to test
       navigate(`/test/${testId}`)
@@ -231,11 +238,18 @@ const Dashboard = () => {
       try {
         const result = await recordTestCompletion(user.id, testId, score, totalQuestions)
         if (result.success) {
-          // Refresh progress data
+          // Force refresh all data
+          await fetchUserProfile()
           await fetchUserProgress()
           await fetchUserStats()
           await fetchRecentTestsData()
-          await fetchUserProfile()
+          
+          // Force UI update by refreshing profile from localStorage
+          if (!supabase) {
+            const updatedProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
+            setUserProfile(updatedProfile)
+          }
+          
           toast.success('Test completed! Progress updated.')
         }
       } catch (error) {
@@ -308,7 +322,7 @@ const Dashboard = () => {
           <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
             <div className="card min-w-[140px] text-center bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 border-blue-200 dark:border-blue-700">
               <Trophy className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-              <p className="text-xl font-bold text-gray-900 dark:text-white">{userStats.testsCompleted}</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">{userStats.testsCompleted || userProfile?.tests_taken || 0}</p>
               <p className="text-xs text-gray-600 dark:text-gray-400">Tests Taken</p>
             </div>
             <div className="card min-w-[140px] text-center bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 border-green-200 dark:border-green-700">
