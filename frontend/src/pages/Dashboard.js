@@ -331,6 +331,26 @@ const Dashboard = () => {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6">
+        {/* Free Test Banner */}
+        <div 
+          onClick={() => {
+            const freeTestElement = document.getElementById('free-test-card')
+            if (freeTestElement) {
+              freeTestElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }
+          }}
+          className="bg-gradient-to-r from-green-400 to-green-500 text-white p-4 rounded-xl mb-6 cursor-pointer hover:from-green-500 hover:to-green-600 transition-all duration-300 hover:scale-105 shadow-lg"
+        >
+          <div className="flex items-center justify-center space-x-3">
+            <span className="text-2xl">🎉</span>
+            <span className="font-bold text-lg">
+              {language === 'mr' 
+                ? 'मर्यादित काळासाठी – मोफत GK चाचणी उपलब्ध!' 
+                : 'Start with your Free GK Test – worth ₹20, now ₹0!'}
+            </span>
+          </div>
+        </div>
+
         {/* Notification Banner */}
         {showNotification && (
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-xl mb-6 flex items-center justify-between">
@@ -439,8 +459,25 @@ const Dashboard = () => {
               'reasoning': 'from-purple-500 to-purple-600',
               'marathi': 'from-orange-500 to-orange-600'
             }
+            const isFreeTest = test.price === 0 || test.isFree
             return (
-              <div key={test.id} className="card hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-l-4 border-primary">
+              <div 
+                key={test.id} 
+                id={isFreeTest ? 'free-test-card' : undefined}
+                className={`card hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-l-4 border-primary relative ${
+                  isFreeTest 
+                    ? 'bg-gradient-to-br from-green-50 to-yellow-50 dark:from-green-900/20 dark:to-yellow-900/20 border-green-300 dark:border-green-600' 
+                    : ''
+                }`}
+              >
+                {/* FREE Badge */}
+                {isFreeTest && (
+                  <div className="absolute -top-2 -left-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10 flex items-center space-x-1">
+                    <span>🎁</span>
+                    <span>FREE</span>
+                  </div>
+                )}
+                
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-2">
@@ -451,8 +488,18 @@ const Dashboard = () => {
                     </span>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-primary dark:text-blue-400">₹{test.price}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">per test</div>
+                    {isFreeTest ? (
+                      <div>
+                        <div className="text-lg font-bold text-gray-400 line-through">₹20</div>
+                        <div className="text-2xl font-bold text-green-600">₹0</div>
+                        <div className="text-xs text-green-600 font-medium">100% FREE</div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="text-2xl font-bold text-primary dark:text-blue-400">₹{test.price}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">per test</div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -495,12 +542,16 @@ const Dashboard = () => {
                   <button
                     onClick={() => handleBuyTest(test.id, test.price)}
                     className={`flex-1 py-3 rounded-xl font-bold text-base shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 ${
-                      hasAccessToTest(user?.id || 'demo-user-123', test.id)
+                      isFreeTest
+                        ? 'bg-gradient-to-r from-green-500 to-green-600 text-white'
+                        : hasAccessToTest(user?.id || 'demo-user-123', test.id)
                         ? 'bg-gradient-to-r from-green-500 to-green-600 text-white'
                         : 'bg-gradient-to-r from-primary to-blue-600 text-white'
                     }`}
                   >
-                    {hasAccessToTest(user?.id || 'demo-user-123', test.id) 
+                    {isFreeTest
+                      ? '🚀 Start FREE Test →'
+                      : hasAccessToTest(user?.id || 'demo-user-123', test.id) 
                       ? 'Take Test →' 
                       : 'Buy & Take Test →'
                     }

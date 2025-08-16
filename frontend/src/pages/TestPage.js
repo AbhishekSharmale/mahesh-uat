@@ -3,10 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom'
 // import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
 import { supabase } from '../utils/supabase'
-import { Clock, CheckCircle, XCircle } from 'lucide-react'
+import { Clock, CheckCircle, XCircle, Globe } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { demoTests } from '../utils/demoData'
 import { getTranslation } from '../utils/i18n'
+import LanguageToggle from '../components/LanguageToggle'
 
 const TestPage = () => {
   const { testId } = useParams()
@@ -208,9 +209,12 @@ const TestPage = () => {
             <h1 className="text-lg font-semibold text-gray-900">
               {language === 'mr' && test.titleMr ? test.titleMr : test.title}
             </h1>
-            <div className="flex items-center space-x-2 text-primary">
-              <Clock className="h-5 w-5" />
-              <span className="font-mono text-lg">{formatTime(timeLeft)}</span>
+            <div className="flex items-center space-x-3">
+              <LanguageToggle />
+              <div className="flex items-center space-x-2 text-primary">
+                <Clock className="h-5 w-5" />
+                <span className="font-mono text-lg">{formatTime(timeLeft)}</span>
+              </div>
             </div>
           </div>
           <div className="mt-2 bg-gray-200 rounded-full h-2">

@@ -1,7 +1,28 @@
 // Demo data for testing without Supabase
 import { policeTests } from './policeQuestions'
+import { getPromotionalTest } from './promotionalTest'
 
 export const demoTests = [
+  // Free promotional test
+  {
+    id: 'promo-general-knowledge',
+    title: 'General Knowledge Test - Free',
+    titleMr: 'सामान्य ज्ञान चाचणी - मोफत',
+    category: 'gk',
+    price: 0,
+    isFree: true,
+    isPromotional: true,
+    published: true,
+    questions: getPromotionalTest('en').questions.map((q, index) => ({
+      question: q.question,
+      questionMr: getPromotionalTest('mr').questions[index].question,
+      options: q.options,
+      optionsMr: getPromotionalTest('mr').questions[index].options,
+      correct: q.correct,
+      explanation: q.explanation,
+      explanationMr: getPromotionalTest('mr').questions[index].explanation
+    }))
+  },
   ...policeTests,
   {
     id: 'demo-test-1',

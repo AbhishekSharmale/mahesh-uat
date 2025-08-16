@@ -13,6 +13,7 @@ const Home = () => {
   const { user } = useAuth()
   const { language } = useLanguage()
   const navigate = useNavigate()
+  const [showGiftDetails, setShowGiftDetails] = React.useState(false)
 
   const handleGoogleSignIn = async () => {
     try {
@@ -34,7 +35,86 @@ const Home = () => {
   }, [user, navigate])
 
   if (user) {
-    return null
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 transition-all duration-500">
+        {/* Header */}
+        <header className="bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300">
+          <div className="max-w-4xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-7 w-7 text-primary" />
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white">{getTranslation('appName', language)}</h1>
+              </div>
+              <div className="flex items-center space-x-2">
+                <ThemeToggle />
+                <LanguageToggle />
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all duration-200"
+                >
+                  {language === 'mr' ? 'डॅशबोर्ड' : 'Dashboard'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Welcome Back Section */}
+        <main className="max-w-4xl mx-auto px-4 py-8">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              {language === 'mr' ? `स्वागत आहे, ${user.displayName || 'मित्रा'}! 🎉` : `Welcome back, ${user.displayName || 'Friend'}! 🎉`}
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              {language === 'mr' ? 'तुमची मोफत चाचणी तुमची वाट पाहत आहे!' : 'Your FREE test is waiting for you!'}
+            </p>
+          </div>
+
+          {/* Free Test Highlight for Logged Users */}
+          <div className="bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl p-1 shadow-xl mb-8">
+            <div className="bg-white dark:bg-gray-900 rounded-xl p-8 text-center">
+              <div className="text-6xl mb-4">🎁</div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                {language === 'mr' ? 'तुमची मोफत चाचणी तयार आहे!' : 'Your FREE Test is Ready!'}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                {language === 'mr' ? '50 प्रश्न • तपशीलवार स्पष्टीकरण • तत्काळ परिणाम' : '50 Questions • Detailed Explanations • Instant Results'}
+              </p>
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-lg"
+              >
+                {language === 'mr' ? '🚀 चाचणी सुरू करा!' : '🚀 Start Test Now!'}
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="card text-center hover:shadow-lg transition-all duration-300">
+              <div className="text-3xl mb-2">📚</div>
+              <h4 className="font-bold text-gray-900 dark:text-white text-sm">{language === 'mr' ? 'मोफत चाचणी' : 'Free Test'}</h4>
+              <p className="text-gray-600 dark:text-gray-400 text-xs">{language === 'mr' ? 'आता उपलब्ध' : 'Available Now'}</p>
+            </div>
+            <div className="card text-center hover:shadow-lg transition-all duration-300">
+              <div className="text-3xl mb-2">⚡</div>
+              <h4 className="font-bold text-gray-900 dark:text-white text-sm">{language === 'mr' ? 'तत्काळ परिणाम' : 'Instant Results'}</h4>
+              <p className="text-gray-600 dark:text-gray-400 text-xs">{language === 'mr' ? 'तपशीलवार स्पष्टीकरण' : 'Detailed Analysis'}</p>
+            </div>
+            <div className="card text-center hover:shadow-lg transition-all duration-300">
+              <div className="text-3xl mb-2">🌍</div>
+              <h4 className="font-bold text-gray-900 dark:text-white text-sm">{language === 'mr' ? 'द्विभाषिक' : 'Bilingual'}</h4>
+              <p className="text-gray-600 dark:text-gray-400 text-xs">{language === 'mr' ? 'मराठी आणि इंग्रजी' : 'Marathi & English'}</p>
+            </div>
+            <div className="card text-center hover:shadow-lg transition-all duration-300">
+              <div className="text-3xl mb-2">🏆</div>
+              <h4 className="font-bold text-gray-900 dark:text-white text-sm">{language === 'mr' ? 'गुणवत्ता' : 'Quality'}</h4>
+              <p className="text-gray-600 dark:text-gray-400 text-xs">{language === 'mr' ? 'तज्ञांकडून तयार' : 'Expert Crafted'}</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    )
   }
 
   return (
@@ -108,6 +188,109 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Free Test Promotion - Gift Box */}
+        <div className="relative mb-8 mx-4 sm:mx-0">
+          <div className="relative bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-3xl p-1 shadow-2xl">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 relative overflow-hidden">
+              {/* Floating Sparkles */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-6 left-6 text-blue-400 text-lg animate-pulse">✨</div>
+                <div className="absolute top-12 right-8 text-blue-400 text-sm animate-pulse delay-300">⭐</div>
+                <div className="absolute bottom-8 left-12 text-blue-400 text-base animate-pulse delay-700">💫</div>
+                <div className="absolute bottom-6 right-6 text-blue-400 text-lg animate-pulse delay-1000">✨</div>
+              </div>
+              
+              {/* Limited Time Badge */}
+              <div className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-xl z-30 border border-white">
+                {language === 'mr' ? 'मर्यादित काळ!' : 'LIMITED TIME!'}
+              </div>
+              
+              <div className="relative text-center">
+                {/* Gift Box Animation */}
+                <div className="mb-6">
+                  <div className="relative inline-block cursor-pointer transform transition-all duration-500 hover:scale-110" onClick={() => setShowGiftDetails(!showGiftDetails)}>
+                    {!showGiftDetails ? (
+                      <div className="relative">
+                        {/* Gift Box */}
+                        <div className="text-8xl animate-bounce">
+                          🎁
+                        </div>
+                        {/* Tap to Open Text */}
+                        <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                          <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold animate-pulse shadow-lg">
+                            {language === 'mr' ? '👆 आपली मोफत चाचणी उघडा!' : '👆 Tap to open your free test!'}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="animate-fadeIn">
+                        {/* Opened Gift - Explosion Effect */}
+                        <div className="relative">
+                          <div className="text-6xl mb-4">🎉</div>
+                          <div className="absolute -top-2 -left-2 text-2xl animate-ping">✨</div>
+                          <div className="absolute -top-2 -right-2 text-2xl animate-ping delay-200">⭐</div>
+                          <div className="absolute -bottom-2 -left-2 text-2xl animate-ping delay-400">💫</div>
+                          <div className="absolute -bottom-2 -right-2 text-2xl animate-ping delay-600">✨</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Offer Details - Expandable */}
+                <div className={`transition-all duration-700 ease-in-out ${showGiftDetails ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl p-6 mb-6 border-2 border-blue-200 dark:border-blue-700">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                      {language === 'mr' ? '🎊 आपले मोफत भेट उघडले!' : '🎊 Your Free Gift Unlocked!'}
+                    </h3>
+                    
+                    {/* Test Details */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center border border-blue-200">
+                        <div className="text-3xl mb-2">📚</div>
+                        <div className="font-bold text-blue-600">{language === 'mr' ? '50 प्रश्न' : '50 Questions'}</div>
+                        <div className="text-sm text-gray-600">{language === 'mr' ? 'सामान्य ज्ञान' : 'General Knowledge'}</div>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center border border-blue-200">
+                        <div className="text-3xl mb-2">🔢</div>
+                        <div className="font-bold text-blue-600">{language === 'mr' ? 'गणित' : 'Mathematics'}</div>
+                        <div className="text-sm text-gray-600">{language === 'mr' ? 'मूलभूत गणित' : 'Basic Math'}</div>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center border border-blue-200">
+                        <div className="text-3xl mb-2">🧠</div>
+                        <div className="font-bold text-blue-600">{language === 'mr' ? 'तर्कशुद्धता' : 'Reasoning'}</div>
+                        <div className="text-sm text-gray-600">{language === 'mr' ? 'लॉजिकल थिंकिंग' : 'Logical Thinking'}</div>
+                      </div>
+                    </div>
+                    
+                    {/* Value Highlight */}
+                    <div className="flex items-center justify-center mb-4">
+                      <span className="text-2xl font-bold text-gray-400 line-through mr-3">₹10</span>
+                      <span className="text-4xl font-black text-green-600">₹0</span>
+                      <span className="ml-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold animate-pulse">100% FREE</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* CTA Button */}
+                <div className={`transition-all duration-500 ${showGiftDetails ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-70'}`}>
+                  <button
+                    onClick={handleGoogleSignIn}
+                    className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-12 py-4 rounded-full font-bold text-xl transition-all duration-300 hover:scale-105 shadow-2xl transform hover:shadow-3xl mb-4 border-2 border-blue-400"
+                  >
+                    {language === 'mr' ? '🚀 आता मोफत सुरू करा!' : '🚀 Start FREE Test Now!'}
+                  </button>
+                </div>
+                
+                {/* Urgency Text */}
+                <p className="text-sm text-red-600 dark:text-red-400 font-semibold animate-pulse">
+                  {language === 'mr' ? '⏰ फक्त नवीन वापरकर्त्यांसाठी - आजच घ्या!' : '⏰ New Users Only - Claim Today!'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Categories */}
         <div className="card mb-8">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6 text-center">{getTranslation('testCategories', language)}</h3>
@@ -133,12 +316,14 @@ const Home = () => {
 
         {/* Sticky CTA for Mobile */}
         <div className="fixed bottom-20 left-4 right-4 sm:hidden z-40">
-          <button
-            onClick={handleGoogleSignIn}
-            className="w-full bg-primary text-white py-3 rounded-full font-bold text-base shadow-lg border border-blue-700 hover:bg-blue-700 active:bg-blue-800 active:scale-95 transition-all duration-200"
-          >
-            Start Now – ₹10 Only!
-          </button>
+          <div className="bg-gradient-to-r from-orange-500 to-red-500 p-0.5 rounded-full shadow-2xl">
+            <button
+              onClick={handleGoogleSignIn}
+              className="w-full bg-white text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500 py-3 rounded-full font-bold text-base hover:bg-gray-50 active:scale-95 transition-all duration-200"
+            >
+              🎁 {language === 'mr' ? 'मोफत चाचणी सुरू करा!' : 'Claim FREE Test!'} 🎁
+            </button>
+          </div>
         </div>
       </main>
     </div>

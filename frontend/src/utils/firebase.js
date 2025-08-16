@@ -2,13 +2,13 @@ import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC5M-eH7K9UPUMND4CFXDBw8BFuTHZAQiw",
-  authDomain: "mahesh-9af88.firebaseapp.com",
-  projectId: "mahesh-9af88",
-  storageBucket: "mahesh-9af88.firebasestorage.app",
-  messagingSenderId: "818742362654",
-  appId: "1:818742362654:web:a8a68038c27d2d8930240f",
-  measurementId: "G-1VW4WJ8XXF"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 }
 
 let app = null
