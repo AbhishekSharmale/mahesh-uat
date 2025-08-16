@@ -300,7 +300,7 @@ const Dashboard = () => {
     if (userProfile && user) {
       fetchUserStats()
     }
-  }, [userProfile]) // Remove dependencies to avoid re-creation
+  }, [userProfile, user, fetchUserStats]) // Remove dependencies to avoid re-creation
 
 
 
