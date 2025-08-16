@@ -98,8 +98,16 @@ const Dashboard = () => {
   const fetchUserProfile = async () => {
     try {
       if (!supabase) {
-        // Demo mode
-        setUserProfile(demoProfile)
+        // Demo mode - start with zero balance
+        // Get demo profile from localStorage or create new
+        const demoProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
+        setUserProfile({
+          id: demoProfile.id || 'demo-user',
+          name: demoProfile.name || 'Demo User',
+          email: demoProfile.email || 'demo@test.com',
+          wallet_balance: demoProfile.wallet_balance || 0,
+          tests_taken: demoProfile.tests_taken || 0
+        })
         return
       }
 
@@ -204,10 +212,17 @@ const Dashboard = () => {
   }
 
   const handleBalanceUpdate = (amount) => {
-    setUserProfile(prev => ({
-      ...prev,
-      wallet_balance: (prev?.wallet_balance || 0) + amount
-    }))
+    setUserProfile(prev => {
+      const updated = {
+        ...prev,
+        wallet_balance: (prev?.wallet_balance || 0) + amount
+      }
+      // Update localStorage for demo mode
+      if (!supabase) {
+        localStorage.setItem('demo_user', JSON.stringify(updated))
+      }
+      return updated
+    })
   }
 
   // Expose handleTestCompletion globally for TestPage to use

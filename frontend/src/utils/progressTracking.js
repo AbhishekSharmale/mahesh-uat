@@ -3,13 +3,27 @@ import { supabase } from './supabase'
 // Get user progress for all categories
 export const getUserProgress = async (userId) => {
   if (!supabase) {
-    // No demo data - return empty progress
-    return {
-      gk: { completed: 0, total: 0, percentage: 0 },
-      math: { completed: 0, total: 0, percentage: 0 },
-      reasoning: { completed: 0, total: 0, percentage: 0 },
-      marathi: { completed: 0, total: 0, percentage: 0 }
-    }
+    // Calculate from localStorage for demo mode
+    const demoResults = JSON.parse(localStorage.getItem('demo_test_results') || '[]')
+    const userResults = demoResults.filter(result => result.user_id === userId)
+    
+    // For demo, assume 10 tests per category
+    const totalPerCategory = 10
+    const categories = ['gk', 'math', 'reasoning', 'marathi']
+    const progress = {}
+    
+    categories.forEach(category => {
+      const completed = Math.min(userResults.length, totalPerCategory) // Simple calculation
+      const percentage = totalPerCategory > 0 ? Math.round((completed / totalPerCategory) * 100) : 0
+      
+      progress[category] = {
+        completed,
+        total: totalPerCategory,
+        percentage
+      }
+    })
+    
+    return progress
   }
 
   try {
@@ -51,7 +65,21 @@ export const getUserProgress = async (userId) => {
 // Get user's recent test results
 export const getRecentTests = async (userId, limit = 5) => {
   if (!supabase) {
-    return [] // No demo data
+    // Get from localStorage for demo mode
+    const demoResults = JSON.parse(localStorage.getItem('demo_test_results') || '[]')
+    const userResults = demoResults
+      .filter(result => result.user_id === userId)
+      .sort((a, b) => new Date(b.completed_at) - new Date(a.completed_at))
+      .slice(0, limit)
+    
+    return userResults.map(result => ({
+      id: result.id,
+      title: `Test ${result.test_id}`,
+      score: result.score,
+      total: result.total_questions,
+      date: formatDate(result.completed_at),
+      category: 'demo'
+    }))
   }
 
   try {
@@ -90,12 +118,33 @@ export const getRecentTests = async (userId, limit = 5) => {
 // Get user statistics
 export const getUserStats = async (userId) => {
   if (!supabase) {
+    // Get from localStorage for demo mode
+    const demoResults = JSON.parse(localStorage.getItem('demo_test_results') || '[]')
+    const userResults = demoResults.filter(result => result.user_id === userId)
+    
+    if (userResults.length === 0) {
+      return {
+        testsCompleted: 0,
+        averageScore: 0,
+        totalPoints: 0,
+        currentStreak: 0,
+        bestStreak: 0,
+        rank: null
+      }
+    }
+    
+    const testsCompleted = userResults.length
+    const totalScore = userResults.reduce((sum, result) => sum + result.score, 0)
+    const totalPossible = userResults.reduce((sum, result) => sum + result.total_questions, 0)
+    const averageScore = totalPossible > 0 ? (totalScore / totalPossible * 10) : 0
+    const totalPoints = totalScore * 10
+    
     return {
-      testsCompleted: 0,
-      averageScore: 0,
-      totalPoints: 0,
-      currentStreak: 0,
-      bestStreak: 0,
+      testsCompleted,
+      averageScore: Math.round(averageScore * 10) / 10,
+      totalPoints,
+      currentStreak: Math.min(testsCompleted, 7), // Simple streak calculation
+      bestStreak: testsCompleted,
       rank: null
     }
   }
@@ -155,6 +204,17 @@ export const getUserStats = async (userId) => {
 export const recordTestCompletion = async (userId, testId, score, totalQuestions) => {
   if (!supabase) {
     console.log('Demo mode: Test completion recorded locally')
+    // Store in localStorage for demo mode
+    const demoResults = JSON.parse(localStorage.getItem('demo_test_results') || '[]')
+    demoResults.push({
+      id: Date.now(),
+      user_id: userId,
+      test_id: testId,
+      score: score,
+      total_questions: totalQuestions,
+      completed_at: new Date().toISOString()
+    })
+    localStorage.setItem('demo_test_results', JSON.stringify(demoResults))
     return { success: true }
   }
 
@@ -176,6 +236,13 @@ export const recordTestCompletion = async (userId, testId, score, totalQuestions
 
     // Update user profile stats
     await updateUserProfile(userId)
+    
+    // Also update localStorage for demo tracking
+    const demoProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
+    if (demoProfile.id) {
+      demoProfile.tests_taken = (demoProfile.tests_taken || 0) + 1
+      localStorage.setItem('demo_user', JSON.stringify(demoProfile))
+    }
 
     return { success: true, data }
   } catch (error) {

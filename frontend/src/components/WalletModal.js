@@ -22,13 +22,7 @@ const WalletModal = ({ isOpen, onClose, user, onBalanceUpdate }) => {
     setLoading(true)
     
     try {
-      if (!supabase) {
-        // Demo mode - simulate payment
-        await simulatePayment(amount)
-        return
-      }
-
-      // Real Razorpay payment
+      // Always use Razorpay for payments
       await processRazorpayPayment(amount)
       
     } catch (error) {
@@ -61,6 +55,9 @@ const WalletModal = ({ isOpen, onClose, user, onBalanceUpdate }) => {
               .eq('id', user.id)
             
             if (error) throw error
+          } else {
+            // Demo mode - still update local state
+            console.log('Demo mode: Payment successful')
           }
           
           onBalanceUpdate(amount)
