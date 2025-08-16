@@ -25,8 +25,8 @@ export const initiatePayment = async ({
       throw new Error('Razorpay SDK failed to load')
     }
     
-    // Debug: Check if key is available
-    const razorpayKey = process.env.REACT_APP_RAZORPAY_KEY_ID || 'rzp_test_R66njizeMye8bm'
+    // Use live or test key based on environment
+    const razorpayKey = process.env.REACT_APP_RAZORPAY_KEY_ID || 'rzp_live_R66OhBTgwnZzVP'
     console.log('Razorpay Key:', razorpayKey)
 
     const options = {
