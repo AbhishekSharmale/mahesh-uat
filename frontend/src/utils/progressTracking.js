@@ -238,7 +238,6 @@ const calculateStreaks = (results) => {
   let tempStreak = 0
 
   // Calculate current streak from today backwards
-  const today = new Date().toDateString()
   let checkDate = new Date()
   
   for (let i = 0; i < 30; i++) { // Check last 30 days

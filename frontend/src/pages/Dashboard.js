@@ -200,21 +200,7 @@ const Dashboard = () => {
     }
   }
 
-  // Function to handle test completion (called from TestPage)
-  const handleTestCompletion = async (testId, score, totalQuestions) => {
-    try {
-      const result = await recordTestCompletion(user.id, testId, score, totalQuestions)
-      if (result.success) {
-        // Refresh progress data
-        await fetchUserProgress()
-        await fetchUserStats()
-        await fetchRecentTestsData()
-        toast.success('Test completed! Progress updated.')
-      }
-    } catch (error) {
-      console.error('Error recording test completion:', error)
-    }
-  }
+
 
   const filteredTests = selectedCategory === 'all' 
     ? tests 
