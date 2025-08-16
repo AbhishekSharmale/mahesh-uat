@@ -212,7 +212,7 @@ const Dashboard = () => {
 
   // Expose handleTestCompletion globally for TestPage to use
   React.useEffect(() => {
-    const handleTestCompletion = async (testId, score, totalQuestions) => {
+    window.handleTestCompletion = async (testId, score, totalQuestions) => {
       try {
         const result = await recordTestCompletion(user.id, testId, score, totalQuestions)
         if (result.success) {
@@ -220,7 +220,7 @@ const Dashboard = () => {
           await fetchUserProgress()
           await fetchUserStats()
           await fetchRecentTestsData()
-          await fetchUserProfile() // Refresh profile to update tests_taken
+          await fetchUserProfile()
           toast.success('Test completed! Progress updated.')
         }
       } catch (error) {
@@ -228,11 +228,10 @@ const Dashboard = () => {
       }
     }
     
-    window.handleTestCompletion = handleTestCompletion
     return () => {
       delete window.handleTestCompletion
     }
-  }, [user, fetchUserProgress, fetchUserStats, fetchRecentTestsData, fetchUserProfile])
+  }) // Remove dependencies to avoid re-creation
 
 
 
