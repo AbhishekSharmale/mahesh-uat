@@ -7,7 +7,7 @@ import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame,
 import toast from 'react-hot-toast'
 import { demoTests, demoProfile } from '../utils/demoData'
 import { getTranslation } from '../utils/i18n'
-import { getUserProgress, getRecentTests, getUserStats, recordTestCompletion } from '../utils/progressTracking'
+import { getUserProgress, getRecentTests, getUserStats } from '../utils/progressTracking'
 
 const Dashboard = () => {
   const { user, signOut } = useAuth()
