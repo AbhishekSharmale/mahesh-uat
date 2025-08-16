@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { X, CreditCard, Plus } from 'lucide-react'
+import { X, CreditCard } from 'lucide-react'
 import { initiatePayment } from '../utils/razorpay'
 import { supabase } from '../utils/supabase'
 import toast from 'react-hot-toast'

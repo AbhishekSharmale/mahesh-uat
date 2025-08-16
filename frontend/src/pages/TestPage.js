@@ -10,7 +10,7 @@ import { getTranslation } from '../utils/i18n'
 
 const TestPage = () => {
   const { testId } = useParams()
-  const { user } = useAuth()
+  const { } = useAuth()
   const { language } = useLanguage()
   const navigate = useNavigate()
   const [test, setTest] = useState(null)

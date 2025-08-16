@@ -233,7 +233,7 @@ const Dashboard = () => {
     return () => {
       delete window.handleTestCompletion
     }
-  }, [user])
+  }, [user, handleTestCompletion])
 
 
 
