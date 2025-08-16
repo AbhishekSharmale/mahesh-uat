@@ -3,12 +3,12 @@ import { supabase } from './supabase'
 // Get user progress for all categories
 export const getUserProgress = async (userId) => {
   if (!supabase) {
-    // Demo data
+    // No demo data - return empty progress
     return {
-      gk: { completed: 8, total: 15, percentage: 53 },
-      math: { completed: 5, total: 12, percentage: 42 },
-      reasoning: { completed: 6, total: 10, percentage: 60 },
-      marathi: { completed: 3, total: 8, percentage: 38 }
+      gk: { completed: 0, total: 0, percentage: 0 },
+      math: { completed: 0, total: 0, percentage: 0 },
+      reasoning: { completed: 0, total: 0, percentage: 0 },
+      marathi: { completed: 0, total: 0, percentage: 0 }
     }
   }
 
@@ -51,11 +51,7 @@ export const getUserProgress = async (userId) => {
 // Get user's recent test results
 export const getRecentTests = async (userId, limit = 5) => {
   if (!supabase) {
-    return [
-      { id: 1, title: 'GK Test 1', score: 8, total: 10, date: '2 days ago', category: 'gk' },
-      { id: 2, title: 'Math Basic', score: 7, total: 10, date: '5 days ago', category: 'math' },
-      { id: 3, title: 'Reasoning', score: 9, total: 10, date: '1 week ago', category: 'reasoning' }
-    ]
+    return [] // No demo data
   }
 
   try {
@@ -95,12 +91,12 @@ export const getRecentTests = async (userId, limit = 5) => {
 export const getUserStats = async (userId) => {
   if (!supabase) {
     return {
-      testsCompleted: 22,
-      averageScore: 7.8,
-      totalPoints: 1250,
-      currentStreak: 7,
-      bestStreak: 12,
-      rank: 15
+      testsCompleted: 0,
+      averageScore: 0,
+      totalPoints: 0,
+      currentStreak: 0,
+      bestStreak: 0,
+      rank: null
     }
   }
 

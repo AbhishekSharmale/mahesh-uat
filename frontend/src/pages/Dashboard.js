@@ -3,11 +3,12 @@ import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
 import { supabase } from '../utils/supabase'
 import { useNavigate } from 'react-router-dom'
-import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame, Bell, X } from 'lucide-react'
+import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame, Bell, X, Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { demoTests, demoProfile } from '../utils/demoData'
 import { getTranslation } from '../utils/i18n'
-import { getUserProgress, getRecentTests, getUserStats } from '../utils/progressTracking'
+import { getUserProgress, getRecentTests, getUserStats, recordTestCompletion } from '../utils/progressTracking'
+import WalletModal from '../components/WalletModal'
 
 const Dashboard = () => {
   const { user, signOut } = useAuth()
@@ -52,6 +53,7 @@ const Dashboard = () => {
     currentStreak: 0
   })
   const [recentTestsData, setRecentTestsData] = useState([])
+  const [showWalletModal, setShowWalletModal] = useState(false)
 
   useEffect(() => {
     fetchUserProfile()
@@ -117,7 +119,8 @@ const Dashboard = () => {
               email: user.email,
               name: user.user_metadata.full_name || user.email,
               wallet_balance: 0,
-              tests_taken: 0
+              tests_taken: 0,
+              created_at: new Date().toISOString()
             }
           ])
           .select()
@@ -161,27 +164,27 @@ const Dashboard = () => {
 
   const handleBuyTest = async (testId, price) => {
     try {
-      if (!supabase) {
-        // Demo mode - simulate purchase
-        if (userProfile.wallet_balance < price) {
-          toast.error('Insufficient balance. Please add money to wallet.')
-          return
-        }
-        navigate(`/test/${testId}`)
-        toast.success('Test purchased successfully!')
+      // Check if user has enough balance
+      if ((userProfile?.wallet_balance || 0) < price) {
+        toast.error('Insufficient balance. Please add money to wallet.')
+        setShowWalletModal(true)
         return
       }
 
-      // Check if user has enough balance
-      if (userProfile.wallet_balance < price) {
-        toast.error('Insufficient balance. Please add money to wallet.')
+      if (!supabase) {
+        // Demo mode - simulate purchase
+        navigate(`/test/${testId}`)
+        toast.success('Test purchased successfully!')
         return
       }
 
       // Deduct balance and unlock test
       const { error } = await supabase
         .from('profiles')
-        .update({ wallet_balance: userProfile.wallet_balance - price })
+        .update({ 
+          wallet_balance: userProfile.wallet_balance - price,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', user.id)
 
       if (error) throw error
@@ -199,6 +202,38 @@ const Dashboard = () => {
       toast.error('Purchase failed. Please try again.')
     }
   }
+
+  const handleBalanceUpdate = (amount) => {
+    setUserProfile(prev => ({
+      ...prev,
+      wallet_balance: (prev?.wallet_balance || 0) + amount
+    }))
+  }
+
+  // Function to handle test completion (called from TestPage)
+  const handleTestCompletion = async (testId, score, totalQuestions) => {
+    try {
+      const result = await recordTestCompletion(user.id, testId, score, totalQuestions)
+      if (result.success) {
+        // Refresh progress data
+        await fetchUserProgress()
+        await fetchUserStats()
+        await fetchRecentTestsData()
+        await fetchUserProfile() // Refresh profile to update tests_taken
+        toast.success('Test completed! Progress updated.')
+      }
+    } catch (error) {
+      console.error('Error recording test completion:', error)
+    }
+  }
+
+  // Expose handleTestCompletion globally for TestPage to use
+  React.useEffect(() => {
+    window.handleTestCompletion = handleTestCompletion
+    return () => {
+      delete window.handleTestCompletion
+    }
+  }, [user])
 
 
 
@@ -222,10 +257,14 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">{getTranslation('dashboard', language)}</h1>
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <CreditCard className="h-5 w-5 text-gray-600" />
+              <button 
+                onClick={() => setShowWalletModal(true)}
+                className="flex items-center space-x-2 bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 px-3 py-2 rounded-lg transition-colors"
+              >
+                <CreditCard className="h-5 w-5 text-green-600 dark:text-green-400" />
                 <span className="font-medium text-gray-900 dark:text-white">₹{userProfile?.wallet_balance || 0}</span>
-              </div>
+                <Plus className="h-4 w-4 text-green-600 dark:text-green-400" />
+              </button>
               <button
                 onClick={signOut}
                 className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200"
@@ -481,6 +520,14 @@ const Dashboard = () => {
           </div>
         </div>
       </main>
+
+      {/* Wallet Modal */}
+      <WalletModal 
+        isOpen={showWalletModal}
+        onClose={() => setShowWalletModal(false)}
+        user={user}
+        onBalanceUpdate={handleBalanceUpdate}
+      />
     </div>
   )
 }

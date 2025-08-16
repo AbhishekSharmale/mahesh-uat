@@ -96,32 +96,19 @@ const TestPage = () => {
       const finalScore = (correctAnswers / test.questions.length) * 100
 
       if (!supabase) {
-        // Demo mode - just show results
+        // Demo mode - still record completion for tracking
+        if (window.handleTestCompletion) {
+          await window.handleTestCompletion(testId, correctAnswers, test.questions.length)
+        }
         setScore(finalScore)
         setShowResults(true)
         return
       }
 
-      // Save test result
-      const { error } = await supabase
-        .from('user_tests')
-        .insert([
-          {
-            user_id: user.id,
-            test_id: testId,
-            score: finalScore,
-            answers: answers,
-            completed_at: new Date().toISOString()
-          }
-        ])
-
-      if (error) throw error
-
-      // Update user profile
-      await supabase
-        .from('profiles')
-        .update({ tests_taken: supabase.sql`tests_taken + 1` })
-        .eq('id', user.id)
+      // Record test completion using progress tracking
+      if (window.handleTestCompletion) {
+        await window.handleTestCompletion(testId, correctAnswers, test.questions.length)
+      }
 
       setScore(finalScore)
       setShowResults(true)
