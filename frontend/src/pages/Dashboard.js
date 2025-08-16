@@ -38,8 +38,6 @@ const Dashboard = () => {
     { id: 'hard', name: 'Hard' }
   ]
 
-
-
   const leaderboard = [
     { rank: 1, name: 'Rahul S.', score: 95, tests: 25 },
     { rank: 2, name: 'Priya P.', score: 92, tests: 22 },
@@ -241,7 +239,6 @@ const Dashboard = () => {
       navigate(`/test/${testId}`)
       toast.success('Test purchased successfully! You now have lifetime access.')
     } catch (error) {
-
       toast.error('Purchase failed. Please try again.')
     }
   }
@@ -275,12 +272,10 @@ const Dashboard = () => {
           // Force UI update by refreshing profile from localStorage
           if (!supabase) {
             const updatedProfile = JSON.parse(localStorage.getItem('demo_user') || '{}')
-
             setUserProfile(updatedProfile)
             
             // Also refresh userStats
-            const newStats = await getUserStats(user.id)
-            setUserStats(newStats)
+            fetchUserStats()
           }
           
           toast.success('Test completed! Progress updated.')
@@ -293,16 +288,7 @@ const Dashboard = () => {
     return () => {
       delete window.handleTestCompletion
     }
-  })
-  
-  // Refresh data when userProfile changes
-  React.useEffect(() => {
-    if (userProfile && user) {
-      fetchUserStats()
-    }
-  }, [userProfile, user, fetchUserStats]) // Remove dependencies to avoid re-creation
-
-
+  }) // Remove dependencies to avoid re-creation
 
   const filteredTests = selectedCategory === 'all' 
     ? tests 
