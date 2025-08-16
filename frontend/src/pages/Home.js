@@ -119,9 +119,9 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm">
+      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm">
         <div className="max-w-md mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -137,9 +137,9 @@ const Home = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-md mx-auto px-6 py-8 space-y-8">
+      <main className="max-w-md mx-auto px-6 py-6 space-y-6 pb-16">
         {/* Hero Section */}
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-3">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white leading-tight">
             {getTranslation('heroTitle', language)}
           </h2>
@@ -148,91 +148,97 @@ const Home = () => {
           </p>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-center space-y-2">
-            <div className="text-2xl">📚</div>
-            <h3 className="font-semibold text-gray-900 dark:text-white text-sm">{language === 'mr' ? '50 प्रश्न' : '50 Questions'}</h3>
-            <p className="text-gray-600 dark:text-gray-400 text-xs">{language === 'mr' ? 'केंद्रित चाचण्या' : 'Focused Tests'}</p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-center space-y-2">
-            <div className="text-2xl">⚡</div>
-            <h3 className="font-semibold text-gray-900 dark:text-white text-sm">{language === 'mr' ? 'त्वरित परिणाम' : 'Instant Results'}</h3>
-            <p className="text-gray-600 dark:text-gray-400 text-xs">{language === 'mr' ? 'तपशीलवार उत्तरे' : 'Detailed Solutions'}</p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-center space-y-2">
-            <div className="text-2xl">👨🏫</div>
-            <h3 className="font-semibold text-gray-900 dark:text-white text-sm">{language === 'mr' ? 'तज्ञ सामग्री' : 'Expert Content'}</h3>
-            <p className="text-gray-600 dark:text-gray-400 text-xs">{language === 'mr' ? 'परीक्षा तज्ञ' : 'Exam Specialists'}</p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-center space-y-2">
-            <div className="text-2xl">💰</div>
-            <h3 className="font-semibold text-gray-900 dark:text-white text-sm">{language === 'mr' ? 'फक्त ₹10' : 'Only ₹10'}</h3>
-            <p className="text-gray-600 dark:text-gray-400 text-xs">{language === 'mr' ? 'परवळणारी किंमत' : 'Affordable Price'}</p>
-          </div>
-        </div>
-
-        {/* Free Test Offer Card */}
-        <div className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/20 dark:to-gray-800 rounded-2xl p-6 border border-blue-100 dark:border-blue-800 shadow-lg">
-          <div className="text-center space-y-4">
-            <div className="text-5xl">🎁</div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                {language === 'mr' ? 'मोफत चाचणी!' : 'FREE Test!'}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                {language === 'mr' ? 'नवीन वापरकर्त्यांसाठी विशेष ऑफर' : 'Special offer for new users'}
-              </p>
-            </div>
-            <button
-              onClick={handleGoogleSignIn}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-            >
-              {language === 'mr' ? '🚀 मोफत सुरुवात करा' : '🚀 Start Free Test'}
-            </button>
-          </div>
-        </div>
-
-        {/* Categories */}
+        {/* Features Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white text-center">
-            {language === 'mr' ? 'चाचणी विभाग' : 'Test Categories'}
-          </h3>
+          <div className="flex items-center justify-center">
+            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
+            <h3 className="px-4 text-sm font-bold text-gray-900 dark:text-white">
+              {language === 'mr' ? 'वैशिष्ट्ये' : 'Features'}
+            </h3>
+            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+              <div className="text-lg mb-1">📚</div>
+              <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? '50 प्रश्न' : '50 Questions'}</h4>
+            </div>
+            <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+              <div className="text-lg mb-1">⚡</div>
+              <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? 'त्वरित परिणाम' : 'Instant Results'}</h4>
+            </div>
+            <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+              <div className="text-lg mb-1">👨🏫</div>
+              <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? 'तज्ञ सामग्री' : 'Expert Content'}</h4>
+            </div>
+            <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+              <div className="text-lg mb-1">💰</div>
+              <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? 'फक्त ₹10' : 'Only ₹10'}</h4>
+            </div>
+          </div>
+        </div>
+
+        {/* Free Test Offer Card - Enhanced */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-3xl blur-lg opacity-20"></div>
+          <div className="relative bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-3xl p-6 shadow-2xl border border-blue-300/50">
+            <div className="text-center space-y-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-yellow-300 rounded-full blur-md opacity-50 animate-pulse"></div>
+                <div className="relative text-6xl animate-bounce">🎁</div>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold text-white">
+                  {language === 'mr' ? 'मोफत चाचणी!' : 'FREE Test!'}
+                </h3>
+                <p className="text-blue-100 text-sm">
+                  {language === 'mr' ? 'नवीन वापरकर्त्यांसाठी विशेष ऑफर' : 'Special offer for new users'}
+                </p>
+              </div>
+              <button
+                onClick={handleGoogleSignIn}
+                className="w-full bg-white text-blue-600 py-4 px-6 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-blue-50"
+              >
+                {language === 'mr' ? '🚀 मोफत सुरुवात करा' : '🚀 Start Free Test'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Categories Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-center">
+            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
+            <h3 className="px-4 text-sm font-bold text-gray-900 dark:text-white">
+              {language === 'mr' ? 'चाचणी विभाग' : 'Test Categories'}
+            </h3>
+            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
+          </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-xl text-white text-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105">
-              <div className="text-2xl mb-2">📚</div>
-              <h4 className="font-semibold text-sm">{language === 'mr' ? 'सामान्य ज्ञान' : 'General Knowledge'}</h4>
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-5 rounded-2xl text-white text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-3xl mb-3">📚</div>
+              <h4 className="font-bold text-sm">{language === 'mr' ? 'सामान्य ज्ञान' : 'General Knowledge'}</h4>
             </div>
-            <div className="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-xl text-white text-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105">
-              <div className="text-2xl mb-2">🔢</div>
-              <h4 className="font-semibold text-sm">{language === 'mr' ? 'गणित' : 'Mathematics'}</h4>
+            <div className="bg-gradient-to-br from-green-500 to-green-600 p-5 rounded-2xl text-white text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-3xl mb-3">🔢</div>
+              <h4 className="font-bold text-sm">{language === 'mr' ? 'गणित' : 'Mathematics'}</h4>
             </div>
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-xl text-white text-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105">
-              <div className="text-2xl mb-2">🧠</div>
-              <h4 className="font-semibold text-sm">{language === 'mr' ? 'तर्कशुद्धता' : 'Reasoning'}</h4>
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-5 rounded-2xl text-white text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-3xl mb-3">🧠</div>
+              <h4 className="font-bold text-sm">{language === 'mr' ? 'तर्कशुद्धता' : 'Reasoning'}</h4>
             </div>
-            <div className="bg-gradient-to-br from-red-500 to-red-600 p-4 rounded-xl text-white text-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105">
-              <div className="text-2xl mb-2">📝</div>
-              <h4 className="font-semibold text-sm">{language === 'mr' ? 'मराठी' : 'Marathi'}</h4>
+            <div className="bg-gradient-to-br from-red-500 to-red-600 p-5 rounded-2xl text-white text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-3xl mb-3">📝</div>
+              <h4 className="font-bold text-sm">{language === 'mr' ? 'मराठी' : 'Marathi'}</h4>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
-        <div className="max-w-md mx-auto px-6 py-6">
-          <div className="text-center space-y-2">
-            <div className="flex justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
-              <span>Contact Support</span>
-              <span>•</span>
-              <span>Privacy Policy</span>
-            </div>
-            <p className="text-xs text-gray-500 dark:text-gray-500">
-              Built by Abhishek Sharmale 🚀 2025
-            </p>
-          </div>
-        </div>
+      {/* Minimal Footer */}
+      <footer className="text-center py-4 px-6">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          By Mahesh Sharmale
+        </p>
       </footer>
     </div>
   )
