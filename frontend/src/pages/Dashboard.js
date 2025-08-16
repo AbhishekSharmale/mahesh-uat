@@ -7,6 +7,7 @@ import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame,
 import toast from 'react-hot-toast'
 import { demoTests, demoProfile } from '../utils/demoData'
 import { getTranslation } from '../utils/i18n'
+import { getUserProgress, getRecentTests, getUserStats, recordTestCompletion } from '../utils/progressTracking'
 
 const Dashboard = () => {
   const { user, signOut } = useAuth()
@@ -35,11 +36,7 @@ const Dashboard = () => {
     { id: 'hard', name: 'Hard' }
   ]
 
-  const recentTests = [
-    { id: 1, title: 'GK Test 1', score: 8, total: 10, date: '2 days ago' },
-    { id: 2, title: 'Math Basic', score: 7, total: 10, date: '5 days ago' },
-    { id: 3, title: 'Reasoning', score: 9, total: 10, date: '1 week ago' }
-  ]
+
 
   const leaderboard = [
     { rank: 1, name: 'Rahul S.', score: 95, tests: 25 },
@@ -47,17 +44,54 @@ const Dashboard = () => {
     { rank: 3, name: 'Amit K.', score: 89, tests: 28 }
   ]
 
-  const categoryProgress = {
-    gk: { completed: 8, total: 15, percentage: 53 },
-    math: { completed: 5, total: 12, percentage: 42 },
-    reasoning: { completed: 6, total: 10, percentage: 60 },
-    marathi: { completed: 3, total: 8, percentage: 38 }
-  }
+  const [categoryProgress, setCategoryProgress] = useState({})
+  const [userStats, setUserStats] = useState({
+    testsCompleted: 0,
+    averageScore: 0,
+    totalPoints: 0,
+    currentStreak: 0
+  })
+  const [recentTestsData, setRecentTestsData] = useState([])
 
   useEffect(() => {
     fetchUserProfile()
     fetchTests()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    if (user) {
+      fetchUserProgress()
+      fetchUserStats()
+      fetchRecentTestsData()
+    }
+  }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const fetchUserProgress = async () => {
+    if (!user) return
+    try {
+      const progress = await getUserProgress(user.id)
+      setCategoryProgress(progress)
+    } catch (error) {
+      console.error('Error fetching user progress:', error)
+    }
+  }
+
+  const fetchUserStats = async () => {
+    if (!user) return
+    try {
+      const stats = await getUserStats(user.id)
+      setUserStats(stats)
+    } catch (error) {
+      console.error('Error fetching user stats:', error)
+    }
+  }
+
+  const fetchRecentTestsData = async () => {
+    if (!user) return
+    try {
+      const tests = await getRecentTests(user.id, 3)
+      setRecentTestsData(tests)
+    } catch (error) {
+      console.error('Error fetching recent tests:', error)
+    }
+  }
 
   const fetchUserProfile = async () => {
     try {
@@ -138,7 +172,7 @@ const Dashboard = () => {
         return
       }
 
-      // Check if user has enough balance or implement Razorpay
+      // Check if user has enough balance
       if (userProfile.wallet_balance < price) {
         toast.error('Insufficient balance. Please add money to wallet.')
         return
@@ -152,11 +186,33 @@ const Dashboard = () => {
 
       if (error) throw error
 
+      // Update local state
+      setUserProfile(prev => ({
+        ...prev,
+        wallet_balance: prev.wallet_balance - price
+      }))
+
       // Navigate to test
       navigate(`/test/${testId}`)
       toast.success('Test purchased successfully!')
     } catch (error) {
       toast.error('Purchase failed. Please try again.')
+    }
+  }
+
+  // Function to handle test completion (called from TestPage)
+  const handleTestCompletion = async (testId, score, totalQuestions) => {
+    try {
+      const result = await recordTestCompletion(user.id, testId, score, totalQuestions)
+      if (result.success) {
+        // Refresh progress data
+        await fetchUserProgress()
+        await fetchUserStats()
+        await fetchRecentTestsData()
+        toast.success('Test completed! Progress updated.')
+      }
+    } catch (error) {
+      console.error('Error recording test completion:', error)
     }
   }
 
@@ -214,7 +270,7 @@ const Dashboard = () => {
           <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
             <div className="card min-w-[140px] text-center bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 border-blue-200 dark:border-blue-700">
               <Trophy className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-              <p className="text-xl font-bold text-gray-900 dark:text-white">{userProfile?.tests_taken || 0}</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">{userStats.testsCompleted}</p>
               <p className="text-xs text-gray-600 dark:text-gray-400">Tests Taken</p>
             </div>
             <div className="card min-w-[140px] text-center bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 border-green-200 dark:border-green-700">
@@ -229,12 +285,12 @@ const Dashboard = () => {
             </div>
             <div className="card min-w-[140px] text-center bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900 dark:to-orange-800 border-orange-200 dark:border-orange-700">
               <Flame className="h-6 w-6 text-orange-600 dark:text-orange-400 mx-auto mb-2" />
-              <p className="text-xl font-bold text-gray-900 dark:text-white">7</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">{userStats.currentStreak}</p>
               <p className="text-xs text-gray-600 dark:text-gray-400">Day Streak</p>
             </div>
             <div className="card min-w-[140px] text-center bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900 dark:to-pink-800 border-pink-200 dark:border-pink-700">
               <Award className="h-6 w-6 text-pink-600 dark:text-pink-400 mx-auto mb-2" />
-              <p className="text-xl font-bold text-gray-900 dark:text-white">1,250</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">{userStats.totalPoints}</p>
               <p className="text-xs text-gray-600 dark:text-gray-400">Reward Points</p>
             </div>
           </div>
@@ -389,7 +445,7 @@ const Dashboard = () => {
               Recent Tests
             </h3>
             <div className="space-y-3">
-              {recentTests.map(test => (
+              {recentTestsData.length > 0 ? recentTestsData.map(test => (
                 <div key={test.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">{test.title}</p>
@@ -400,7 +456,12 @@ const Dashboard = () => {
                     <div className="text-xs text-gray-500">Score</div>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+                  <p className="text-sm">No tests completed yet</p>
+                  <p className="text-xs">Start taking tests to see your progress!</p>
+                </div>
+              )}
             </div>
           </div>
 
