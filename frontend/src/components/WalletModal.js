@@ -38,7 +38,7 @@ const WalletModal = ({ isOpen, onClose, user, onBalanceUpdate }) => {
       await initiatePayment({
         amount: amount,
         currency: 'INR',
-        orderId: `order_${Date.now()}`, // In production, get from backend
+        // orderId: `order_${Date.now()}`, // Not needed for test mode
         userDetails: {
           name: user.name || user.email,
           email: user.email

@@ -31,7 +31,7 @@ export const initiatePayment = async ({
       currency: currency,
       name: 'Police Bharti Test Series',
       description: 'Add money to wallet',
-      order_id: orderId,
+      // order_id: orderId, // Comment out for test mode
       handler: function (response) {
         // Payment successful
         onSuccess({
