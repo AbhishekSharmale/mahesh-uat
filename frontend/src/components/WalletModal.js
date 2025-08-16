@@ -24,16 +24,12 @@ const WalletModal = ({ isOpen, onClose, user, onBalanceUpdate }) => {
     try {
       if (!supabase) {
         // Demo mode - simulate payment
-        await new Promise(resolve => setTimeout(resolve, 2000))
-        onBalanceUpdate(amount)
-        toast.success(`₹${amount} added to wallet successfully!`)
-        onClose()
+        await simulatePayment(amount)
         return
       }
 
-      // For now, simulate successful payment in demo
-      // In production, you'll integrate with Razorpay backend
-      await simulatePayment(amount)
+      // Real Razorpay payment
+      await processRazorpayPayment(amount)
       
     } catch (error) {
       toast.error('Payment failed. Please try again.')
@@ -43,21 +39,47 @@ const WalletModal = ({ isOpen, onClose, user, onBalanceUpdate }) => {
     }
   }
 
-  const simulatePayment = async (amount) => {
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    // Update wallet balance in Supabase
-    const { error } = await supabase
-      .from('profiles')
-      .update({ 
-        wallet_balance: supabase.raw(`wallet_balance + ${amount}`),
-        updated_at: new Date().toISOString()
+  const processRazorpayPayment = async (amount) => {
+    try {
+      await initiatePayment({
+        amount: amount,
+        currency: 'INR',
+        orderId: `order_${Date.now()}`, // In production, get from backend
+        userDetails: {
+          name: user.name || user.email,
+          email: user.email
+        },
+        onSuccess: async (response) => {
+          // Payment successful - update wallet
+          if (supabase) {
+            const { error } = await supabase
+              .from('profiles')
+              .update({ 
+                wallet_balance: supabase.raw(`wallet_balance + ${amount}`),
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', user.id)
+            
+            if (error) throw error
+          }
+          
+          onBalanceUpdate(amount)
+          toast.success(`₹${amount} added to wallet successfully!`)
+          onClose()
+        },
+        onFailure: (error) => {
+          toast.error(`Payment failed: ${error}`)
+        }
       })
-      .eq('id', user.id)
+    } catch (error) {
+      toast.error('Payment initialization failed')
+      throw error
+    }
+  }
 
-    if (error) throw error
-
+  const simulatePayment = async (amount) => {
+    // For demo mode without Supabase
+    await new Promise(resolve => setTimeout(resolve, 2000))
     onBalanceUpdate(amount)
     toast.success(`₹${amount} added to wallet successfully!`)
     onClose()

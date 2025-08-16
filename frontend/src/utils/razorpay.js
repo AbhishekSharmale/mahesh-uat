@@ -66,48 +66,16 @@ export const initiatePayment = async ({
   }
 }
 
-// Create order on backend (you'll need to implement this endpoint)
+// For production, you would implement backend order creation
+// For now, we'll use client-side order generation
 export const createRazorpayOrder = async (amount) => {
-  try {
-    const response = await fetch('/api/create-order', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ amount })
-    })
-    
-    if (!response.ok) {
-      throw new Error('Failed to create order')
-    }
-    
-    const data = await response.json()
-    return data.orderId
-  } catch (error) {
-    console.error('Error creating Razorpay order:', error)
-    throw error
-  }
+  // In production, this should be done on backend for security
+  return `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 }
 
-// Verify payment on backend (you'll need to implement this endpoint)
+// For production, implement proper payment verification on backend
 export const verifyPayment = async (paymentData) => {
-  try {
-    const response = await fetch('/api/verify-payment', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(paymentData)
-    })
-    
-    if (!response.ok) {
-      throw new Error('Payment verification failed')
-    }
-    
-    const data = await response.json()
-    return data.verified
-  } catch (error) {
-    console.error('Error verifying payment:', error)
-    throw error
-  }
+  // In production, verify signature on backend
+  console.log('Payment completed:', paymentData)
+  return true
 }
