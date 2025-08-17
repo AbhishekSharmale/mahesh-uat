@@ -16,7 +16,7 @@ const TestPage = () => {
   const [test, setTest] = useState(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState({})
-  const [timeLeft, setTimeLeft] = useState(600) // 10 minutes
+  const [timeLeft, setTimeLeft] = useState(1500) // 25 minutes
   const [showResults, setShowResults] = useState(false)
   const [score, setScore] = useState(0)
   const [loading, setLoading] = useState(true)
