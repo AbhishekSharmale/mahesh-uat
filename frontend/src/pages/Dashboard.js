@@ -3,7 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
 import { supabase } from '../utils/supabase'
 import { useNavigate } from 'react-router-dom'
-import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame, Bell, X, Plus, FileText, Play, Bookmark } from 'lucide-react'
+import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Flame, Bell, X, Plus, FileText, Play, Bookmark } from 'lucide-react'
 import LanguageToggle from '../components/LanguageToggle'
 import ThemeToggle from '../components/ThemeToggle'
 import PWAInstallPrompt from '../components/PWAInstallPrompt'
@@ -25,7 +25,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedDifficulty, setSelectedDifficulty] = useState('all')
-  const [favoriteTests, setFavoriteTests] = useState(new Set())
+  // Remove unused favoriteTests state since we're using bookmarks now
   const [showNotification, setShowNotification] = useState(true)
 
   const categories = [

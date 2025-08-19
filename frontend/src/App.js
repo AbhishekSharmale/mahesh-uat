@@ -22,6 +22,7 @@ function App() {
   // Track page load performance
   React.useEffect(() => {
     performanceMonitor.measurePageLoad()
+    analytics.trackPageView('app_loaded')
   }, [])
   
   return (
