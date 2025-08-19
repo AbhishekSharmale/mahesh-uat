@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import TestPage from './pages/TestPage'
 import Notes from './pages/Notes'
+import Videos from './pages/Videos'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminLogin from './pages/AdminLogin'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -49,21 +50,14 @@ function AppContent() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/test/:testId" element={
             <ProtectedRoute>
               <TestPage />
             </ProtectedRoute>
           } />
-          <Route path="/notes" element={
-            <ProtectedRoute>
-              <Notes />
-            </ProtectedRoute>
-          } />
+          <Route path="/notes" element={<Notes />} />
+          <Route path="/videos" element={<Videos />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>

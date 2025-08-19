@@ -264,6 +264,8 @@ const Home = () => {
           </div>
         </section>
 
+
+
         {/* Special Offer Banner */}
         <section className="bg-gradient-to-r from-orange-400 to-pink-500 rounded-2xl p-6 text-white text-center shadow-xl animate-pulse-glow">
           <div className="flex items-center justify-center space-x-4">
