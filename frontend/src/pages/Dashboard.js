@@ -7,7 +7,6 @@ import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame,
 import LanguageToggle from '../components/LanguageToggle'
 import ThemeToggle from '../components/ThemeToggle'
 import PWAInstallPrompt from '../components/PWAInstallPrompt'
-import LoadingSpinner from '../components/LoadingSpinner'
 import { analytics } from '../utils/analytics'
 import { toggleBookmark, isBookmarked } from '../utils/bookmarks'
 import toast from 'react-hot-toast'
@@ -60,10 +59,16 @@ const Dashboard = () => {
   const [recentTestsData, setRecentTestsData] = useState([])
   const [showWalletModal, setShowWalletModal] = useState(false)
 
-  // Track page view
+  // Track page view and initialize bookmarks
   useEffect(() => {
     analytics.trackPageView('dashboard')
   }, [])
+
+  const handleBookmarkToggle = (testId, testTitle) => {
+    const userId = user?.id || 'demo-user-123'
+    const wasBookmarked = toggleBookmark(userId, testId, testTitle)
+    toast.success(wasBookmarked ? 'Test bookmarked!' : 'Bookmark removed!')
+  }
 
   useEffect(() => {
     fetchUserProfile()
@@ -567,22 +572,14 @@ const Dashboard = () => {
                 
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => setFavoriteTests(prev => {
-                      const newFavorites = new Set(prev)
-                      if (newFavorites.has(test.id)) {
-                        newFavorites.delete(test.id)
-                      } else {
-                        newFavorites.add(test.id)
-                      }
-                      return newFavorites
-                    })}
+                    onClick={() => handleBookmarkToggle(test.id, test.title)}
                     className={`p-3 rounded-xl transition-all duration-200 ${
-                      favoriteTests.has(test.id) 
-                        ? 'bg-red-100 text-red-500 dark:bg-red-900 dark:text-red-400' 
+                      isBookmarked(user?.id || 'demo-user-123', test.id)
+                        ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-400' 
                         : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'
                     }`}
                   >
-                    <Heart className={`h-5 w-5 ${favoriteTests.has(test.id) ? 'fill-current' : ''}`} />
+                    <Bookmark className={`h-5 w-5 ${isBookmarked(user?.id || 'demo-user-123', test.id) ? 'fill-current' : ''}`} />
                   </button>
                   <button
                     onClick={() => handleBuyTest(test.id, test.price)}
