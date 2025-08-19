@@ -5,8 +5,9 @@
 @layer base {
   html {
     font-size: 16px;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     overflow-x: hidden;
+    height: 100%;
   }
   
   body {
@@ -17,6 +18,7 @@
     overflow-x: hidden;
     position: relative;
     min-height: 100vh;
+    overflow-anchor: none;
   }
   
   /* Mobile optimizations */
@@ -24,11 +26,14 @@
     html {
       font-size: 14px;
       -webkit-text-size-adjust: 100%;
+      scroll-behavior: auto;
     }
     
     body {
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
+      overflow-anchor: none;
+      position: relative;
     }
   }
 }
@@ -148,11 +153,17 @@
   .prevent-scroll {
     overflow-anchor: none;
     scroll-behavior: auto;
+    position: relative;
+  }
+  
+  .no-scroll-jump {
+    scroll-margin: 0;
+    scroll-padding: 0;
   }
   
   .bg-animated::before {
     content: '';
-    position: absolute;
+    position: fixed;
     top: -50%;
     left: -50%;
     width: 200%;
@@ -161,6 +172,7 @@
     background-size: 40px 40px;
     animation: backgroundMove 15s linear infinite;
     z-index: -1;
+    pointer-events: none;
   }
   
   .floating-shapes {

@@ -119,7 +119,7 @@ const Home = () => {
   }
 
   return (
-    <div className="mobile-container min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 bg-animated prevent-scroll">
+    <div className="mobile-container min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 bg-animated prevent-scroll no-scroll-jump">
       {/* Floating Background Shapes */}
       <div className="floating-shapes">
         <div className="shape"></div>
