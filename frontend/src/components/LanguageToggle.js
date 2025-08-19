@@ -1,6 +1,5 @@
 import React from 'react'
 import { useLanguage } from '../hooks/useLanguage'
-import { Globe } from 'lucide-react'
 
 const LanguageToggle = () => {
   const { language, toggleLanguage } = useLanguage()
