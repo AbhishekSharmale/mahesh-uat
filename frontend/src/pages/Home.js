@@ -120,6 +120,20 @@ const Home = () => {
 
   return (
     <div className="mobile-container min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 bg-animated prevent-scroll no-scroll-jump">
+      {/* Particle Animation */}
+      <div className="particles">
+        <div className="particle"></div>
+        <div className="particle particle-green"></div>
+        <div className="particle"></div>
+        <div className="particle particle-purple"></div>
+        <div className="particle"></div>
+        <div className="particle particle-green"></div>
+        <div className="particle"></div>
+        <div className="particle particle-purple"></div>
+        <div className="particle"></div>
+        <div className="particle particle-green"></div>
+      </div>
+      
       {/* Floating Background Shapes */}
       <div className="floating-shapes">
         <div className="shape"></div>
@@ -270,6 +284,25 @@ const Home = () => {
           >
             {language === 'mr' ? '🚀 आता सुरुवात करा' : '🚀 Start Now'}
           </button>
+        </section>
+
+        {/* Announcement Banner */}
+        <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl border border-gray-200 dark:border-gray-700">
+          <div className="text-center mb-4">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              {language === 'mr' ? '📢 घोषणा' : '📢 Announcement'}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300">
+              {language === 'mr' ? 'नवीन अपडेट आणि महत्वाची माहिती' : 'Latest updates and important information'}
+            </p>
+          </div>
+          <div className="flex items-center justify-center">
+            <img
+              src="/maheshposter.jpg"
+              alt="Announcement"
+              className="max-w-full h-auto rounded-2xl shadow-md"
+            />
+          </div>
         </section>
 
         {/* Subjects Section */}
