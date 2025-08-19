@@ -303,7 +303,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="mobile-container min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300">
         <div className="max-w-4xl mx-auto px-4 py-4">
@@ -330,7 +330,7 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="max-w-4xl mx-auto px-4 py-4 mobile-optimized">
         {/* Free Test Banner */}
         <div 
           onClick={() => {
@@ -339,7 +339,7 @@ const Dashboard = () => {
               freeTestElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
             }
           }}
-          className="bg-gradient-to-r from-green-400 to-green-500 text-white p-4 rounded-xl mb-6 cursor-pointer hover:from-green-500 hover:to-green-600 transition-all duration-300 hover:scale-105 shadow-lg"
+          className="bg-gradient-to-r from-green-400 to-green-500 animate-gradient text-white p-4 rounded-xl mb-6 cursor-pointer hover:from-green-500 hover:to-green-600 transition-all duration-300 hover:scale-105 shadow-lg animate-pulse-glow"
         >
           <div className="flex items-center justify-center space-x-3">
             <span className="text-2xl">🎉</span>
@@ -363,9 +363,9 @@ const Dashboard = () => {
             </button>
           </div>
         )}
-        {/* User Stats - Horizontal Scroll */}
-        <div className="mb-6">
-          <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+        {/* User Stats - Mobile Optimized */}
+        <div className="mb-4">
+          <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide prevent-zoom">
             <div className="card min-w-[140px] text-center bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 border-blue-200 dark:border-blue-700">
               <Trophy className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
               <p className="text-xl font-bold text-gray-900 dark:text-white">{userStats.testsCompleted || userProfile?.tests_taken || 0}</p>
@@ -418,9 +418,9 @@ const Dashboard = () => {
           <div className="grid grid-cols-2 gap-3 mb-6">
             <button
               onClick={() => navigate('/notes')}
-              className="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-xl font-bold hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
+              className="bg-gradient-to-r from-green-500 to-green-600 animate-gradient text-white p-4 rounded-xl font-bold hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:scale-105 active:scale-95 animate-slide-in-left"
             >
-              <FileText className="h-5 w-5" />
+              <FileText className="h-5 w-5 animate-bounce-gentle" />
               <span>{language === 'mr' ? 'मोफत नोट्स' : 'Free Notes'}</span>
             </button>
             <button
@@ -430,9 +430,9 @@ const Dashboard = () => {
                   testsSection.scrollIntoView({ behavior: 'smooth' })
                 }
               }}
-              className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-xl font-bold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 animate-gradient text-white p-4 rounded-xl font-bold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:scale-105 active:scale-95 animate-slide-in-right"
             >
-              <BookOpen className="h-5 w-5" />
+              <BookOpen className="h-5 w-5 animate-bounce-gentle" />
               <span>{language === 'mr' ? 'टेस्ट सीरीज' : 'Test Series'}</span>
             </button>
           </div>
