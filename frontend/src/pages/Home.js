@@ -119,7 +119,7 @@ const Home = () => {
   }
 
   return (
-    <div className="mobile-container min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 bg-animated">
+    <div className="mobile-container min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 bg-animated prevent-scroll">
       {/* Floating Background Shapes */}
       <div className="floating-shapes">
         <div className="shape"></div>
@@ -176,7 +176,7 @@ const Home = () => {
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-8 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform duration-300 animate-slide-in-left">
               <div className="text-4xl mb-4 animate-bounce-gentle">📝</div>
               <h3 className="text-2xl font-bold mb-2">{language === 'mr' ? 'टेस्ट सीरीज' : 'Test Series'}</h3>
-              <p className="text-blue-100 mb-4">{language === 'mr' ? '10 प्रश्न प्रति टेस्ट' : '10 questions per test'}</p>
+              <p className="text-blue-100 mb-4">{language === 'mr' ? '50 प्रश्न प्रति टेस्ट' : '50 questions per test'}</p>
               <div className="text-3xl font-bold">{language === 'mr' ? 'फक्त ₹10' : 'Only ₹10'}</div>
             </div>
             <div className="bg-gradient-to-br from-green-500 to-green-600 p-8 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform duration-300 animate-slide-in-right">
