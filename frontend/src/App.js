@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import { LanguageProvider } from './hooks/useLanguage'
 import { ThemeProvider } from './hooks/useTheme'
+import { analytics, performanceMonitor } from './utils/analytics'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import TestPage from './pages/TestPage'
@@ -17,6 +18,11 @@ import Footer from './components/Footer'
 
 function App() {
   console.log('App component rendering')
+  
+  // Track page load performance
+  React.useEffect(() => {
+    performanceMonitor.measurePageLoad()
+  }, [])
   
   return (
     <ErrorBoundary>
@@ -50,19 +56,41 @@ function AppContent() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
           <Route path="/test/:testId" element={
             <ProtectedRoute>
               <TestPage />
             </ProtectedRoute>
           } />
-          <Route path="/notes" element={<Notes />} />
-          <Route path="/videos" element={<Videos />} />
+          <Route path="/notes" element={
+            <ProtectedRoute>
+              <Notes />
+            </ProtectedRoute>
+          } />
+          <Route path="/videos" element={
+            <ProtectedRoute>
+              <Videos />
+            </ProtectedRoute>
+          } />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
         <Footer />
-        <Toaster position="top-center" />
+        <Toaster 
+          position="top-center"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+              zIndex: 9999
+            },
+          }}
+        />
       </div>
     </Router>
   )

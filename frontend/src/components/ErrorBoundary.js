@@ -1,4 +1,5 @@
 import React from 'react'
+import { AlertTriangle, RefreshCw } from 'lucide-react'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -12,20 +13,27 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('Error caught by boundary:', error, errorInfo)
+    // Log to analytics service here
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h1>
-            <p className="text-gray-600 mb-4">{this.state.error?.message}</p>
-            <button 
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+          <div className="text-center p-8">
+            <AlertTriangle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Something went wrong
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              We're sorry for the inconvenience. Please try refreshing the page.
+            </p>
+            <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-600 text-white rounded"
+              className="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors mx-auto"
             >
-              Reload Page
+              <RefreshCw className="h-4 w-4" />
+              <span>Refresh Page</span>
             </button>
           </div>
         </div>

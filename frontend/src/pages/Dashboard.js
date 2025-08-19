@@ -3,9 +3,13 @@ import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
 import { supabase } from '../utils/supabase'
 import { useNavigate } from 'react-router-dom'
-import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame, Bell, X, Plus, FileText, Play } from 'lucide-react'
+import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame, Bell, X, Plus, FileText, Play, Bookmark } from 'lucide-react'
 import LanguageToggle from '../components/LanguageToggle'
 import ThemeToggle from '../components/ThemeToggle'
+import PWAInstallPrompt from '../components/PWAInstallPrompt'
+import LoadingSpinner from '../components/LoadingSpinner'
+import { analytics } from '../utils/analytics'
+import { toggleBookmark, isBookmarked } from '../utils/bookmarks'
 import toast from 'react-hot-toast'
 import { demoTests } from '../utils/demoData'
 import { getTranslation } from '../utils/i18n'
@@ -55,6 +59,11 @@ const Dashboard = () => {
   })
   const [recentTestsData, setRecentTestsData] = useState([])
   const [showWalletModal, setShowWalletModal] = useState(false)
+
+  // Track page view
+  useEffect(() => {
+    analytics.trackPageView('dashboard')
+  }, [])
 
   useEffect(() => {
     fetchUserProfile()
@@ -420,13 +429,13 @@ const Dashboard = () => {
         {/* Quick Actions */}
         <div className="mb-6">
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <a
-              href="/notes"
+            <button
+              onClick={() => navigate('/notes')}
               className="bg-gradient-to-r from-green-500 to-green-600 animate-gradient text-white p-4 rounded-xl font-bold hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:scale-105 active:scale-95 animate-slide-in-left"
             >
               <FileText className="h-5 w-5 animate-bounce-gentle" />
               <span className="text-sm">{language === 'mr' ? 'नोट्स' : 'Notes'}</span>
-            </a>
+            </button>
             <button
               onClick={() => {
                 const testsSection = document.querySelector('.grid.gap-4')
@@ -439,13 +448,13 @@ const Dashboard = () => {
               <BookOpen className="h-5 w-5 animate-bounce-gentle" />
               <span className="text-sm">{language === 'mr' ? 'टेस्ट' : 'Tests'}</span>
             </button>
-            <a
-              href="/videos"
+            <button
+              onClick={() => navigate('/videos')}
               className="bg-gradient-to-r from-red-500 to-red-600 animate-gradient text-white p-4 rounded-xl font-bold hover:from-red-600 hover:to-red-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:scale-105 active:scale-95"
             >
               <Play className="h-5 w-5 animate-bounce-gentle" />
               <span className="text-sm">{language === 'mr' ? 'व्हिडिओ' : 'Videos'}</span>
-            </a>
+            </button>
           </div>
         </div>
 
@@ -675,6 +684,9 @@ const Dashboard = () => {
         user={user}
         onBalanceUpdate={handleBalanceUpdate}
       />
+      
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
     </div>
   )
 }

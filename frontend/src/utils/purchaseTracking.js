@@ -1,21 +1,23 @@
 // Track purchased tests for users
+import { validateLocalStorageData, rateLimiter } from './security'
+import { analytics } from './analytics'
 
 export const getPurchasedTests = (userId) => {
   if (!userId) return []
   
-  try {
-    const purchased = localStorage.getItem(`purchased_tests_${userId}`)
-    return purchased ? JSON.parse(purchased) : []
-  } catch (error) {
-    console.error('Error parsing purchased tests:', error)
-    // Clear corrupted data
-    localStorage.removeItem(`purchased_tests_${userId}`)
-    return []
-  }
+  const key = `purchased_tests_${userId}`
+  const data = localStorage.getItem(key)
+  return validateLocalStorageData(key, data) || []
 }
 
 export const purchaseTest = (userId, testId, price) => {
   if (!userId || !testId) return false
+  
+  // Rate limiting
+  if (!rateLimiter.canAttempt(`purchase_${userId}`, 3, 60000)) {
+    console.warn('Purchase rate limit exceeded')
+    return false
+  }
   
   // Validate inputs
   if (typeof price !== 'number' || price < 0) {
@@ -28,25 +30,27 @@ export const purchaseTest = (userId, testId, price) => {
     const existingPurchase = purchased.find(p => p.testId === testId)
     
     if (existingPurchase) {
-      // Already purchased
+      analytics.trackPurchase(testId, price)
       return true
     }
     
     // Add new purchase with validation
     const newPurchase = {
-      testId: String(testId), // Ensure string
-      price: Number(price), // Ensure number
+      testId: String(testId),
+      price: Number(price),
       purchasedAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year
-      userId: userId // Add userId for verification
+      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+      userId: userId
     }
     
     purchased.push(newPurchase)
     localStorage.setItem(`purchased_tests_${userId}`, JSON.stringify(purchased))
     
+    analytics.trackPurchase(testId, price)
     return true
   } catch (error) {
     console.error('Error purchasing test:', error)
+    analytics.trackError(error, 'purchaseTest')
     return false
   }
 }
