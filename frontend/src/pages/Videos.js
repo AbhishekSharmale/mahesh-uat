@@ -11,44 +11,37 @@ const Videos = () => {
     {
       id: 1,
       title: '85+ Batch - Session 1',
-      url: 'https://www.youtube.com/live/c50PoXyitiE?si=QF_aoOGW-IILi1TV',
-      thumbnail: 'https://img.youtube.com/vi/c50PoXyitiE/maxresdefault.jpg'
+      videoId: 'c50PoXyitiE'
     },
     {
       id: 2,
       title: '85+ Batch - Session 2',
-      url: 'https://www.youtube.com/live/cyTEYYgNqvI?si=lmX7aNdnLsDDGmjN',
-      thumbnail: 'https://img.youtube.com/vi/cyTEYYgNqvI/maxresdefault.jpg'
+      videoId: 'cyTEYYgNqvI'
     },
     {
       id: 3,
       title: '85+ Batch - Session 3',
-      url: 'https://www.youtube.com/live/Qj9UdmceCFc?si=Edg5GoD0yjkCd1iJ',
-      thumbnail: 'https://img.youtube.com/vi/Qj9UdmceCFc/maxresdefault.jpg'
+      videoId: 'Qj9UdmceCFc'
     },
     {
       id: 4,
       title: '85+ Batch - Session 4',
-      url: 'https://www.youtube.com/live/Lz8KKUMmwSg?si=DOKv9d766IrQOYYl',
-      thumbnail: 'https://img.youtube.com/vi/Lz8KKUMmwSg/maxresdefault.jpg'
+      videoId: 'Lz8KKUMmwSg'
     },
     {
       id: 5,
       title: '85+ Batch - Session 5',
-      url: 'https://www.youtube.com/live/QFNlp_Ug7JM?si=dfVN9bKAOzlOkgrr',
-      thumbnail: 'https://img.youtube.com/vi/QFNlp_Ug7JM/maxresdefault.jpg'
+      videoId: 'QFNlp_Ug7JM'
     },
     {
       id: 6,
       title: '85+ Batch - Session 6',
-      url: 'https://www.youtube.com/live/Ru2bPSS8NNU?si=v8MZ-cyKnsD8IGO1',
-      thumbnail: 'https://img.youtube.com/vi/Ru2bPSS8NNU/maxresdefault.jpg'
+      videoId: 'Ru2bPSS8NNU'
     },
     {
       id: 7,
       title: '85+ Batch - Session 7',
-      url: 'https://www.youtube.com/live/XNNHCh3-AoU?si=LbesVHavyeSfFgaE',
-      thumbnail: 'https://img.youtube.com/vi/XNNHCh3-AoU/maxresdefault.jpg'
+      videoId: 'XNNHCh3-AoU'
     }
   ]
 
@@ -82,44 +75,23 @@ const Videos = () => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
             {language === 'mr' ? '85+ बॅच व्हिडिओ' : '85+ Batch Videos'}
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid gap-6">
             {batchVideos.map(video => (
               <div key={video.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-                <div className="aspect-video relative">
-                  <img 
-                    src={video.thumbnail} 
-                    alt={video.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.style.display = 'none'
-                      e.target.nextSibling.style.display = 'flex'
-                    }}
-                  />
-                  <div className="w-full h-full bg-gray-200 dark:bg-gray-700 items-center justify-center text-6xl text-gray-400 hidden">
-                    🎥
-                  </div>
-                  <a 
-                    href={video.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-50 transition-colors"
-                  >
-                    <Play className="h-12 w-12 text-white" />
-                  </a>
-                </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-center">
                     {video.title}
                   </h3>
-                  <a 
-                    href={video.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center space-x-2"
-                  >
-                    <Play className="h-4 w-4" />
-                    <span>{language === 'mr' ? 'पहा' : 'Watch'}</span>
-                  </a>
+                  <div className="aspect-video">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${video.videoId}`}
+                      title={video.title}
+                      className="w-full h-full rounded-lg"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
                 </div>
               </div>
             ))}
