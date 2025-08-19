@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLanguage } from '../hooks/useLanguage'
-import { ArrowLeft, Play, Youtube } from 'lucide-react'
+import { ArrowLeft, Youtube } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 const Videos = () => {
