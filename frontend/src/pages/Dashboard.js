@@ -4,6 +4,8 @@ import { useLanguage } from '../hooks/useLanguage'
 import { supabase } from '../utils/supabase'
 import { useNavigate } from 'react-router-dom'
 import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame, Bell, X, Plus, FileText, Play } from 'lucide-react'
+import LanguageToggle from '../components/LanguageToggle'
+import ThemeToggle from '../components/ThemeToggle'
 import toast from 'react-hot-toast'
 import { demoTests } from '../utils/demoData'
 import { getTranslation } from '../utils/i18n'
@@ -310,6 +312,8 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">{getTranslation('dashboard', language)}</h1>
             <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              <LanguageToggle />
               <button 
                 onClick={() => setShowWalletModal(true)}
                 className="flex items-center space-x-2 bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 px-3 py-2 rounded-lg transition-colors"
