@@ -40,6 +40,8 @@ export const AuthProvider = ({ children }) => {
     
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
+        // Clear logout flag when user logs in
+        sessionStorage.removeItem('user_logged_out')
         setUser({
           id: firebaseUser.uid,
           email: firebaseUser.email,
@@ -47,6 +49,13 @@ export const AuthProvider = ({ children }) => {
           avatar: firebaseUser.photoURL
         })
       } else {
+        // Check if user was logged out
+        const isLoggedOut = sessionStorage.getItem('user_logged_out')
+        if (isLoggedOut) {
+          setUser(null)
+          return
+        }
+        
         // Fallback to demo mode or Supabase
         if (!supabase) {
           const demoUser = localStorage.getItem('demo_user')
@@ -82,15 +91,43 @@ export const AuthProvider = ({ children }) => {
     loading,
     signOut: async () => {
       try {
-        await auth.signOut()
-        if (!supabase) {
-          localStorage.removeItem('demo_user')
-        } else {
+        // Set logout flag immediately
+        sessionStorage.setItem('user_logged_out', 'true')
+        
+        // Clear user state immediately
+        setUser(null)
+        
+        // Firebase signout
+        if (auth) {
+          await auth.signOut()
+        }
+        
+        // Supabase signout
+        if (supabase) {
           await supabase.auth.signOut()
         }
-        setUser(null)
+        
+        // Clear all user data
+        localStorage.removeItem('demo_user')
+        localStorage.removeItem('user_purchases')
+        localStorage.removeItem('user_progress')
+        
+        // Clear any user-specific data
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('purchased_tests_') || key.startsWith('user_')) {
+            localStorage.removeItem(key)
+          }
+        })
+        
+        // Redirect to home and prevent back navigation
+        window.location.replace('/')
       } catch (error) {
         console.error('Sign out error:', error)
+        // Force logout even if there's an error
+        sessionStorage.setItem('user_logged_out', 'true')
+        setUser(null)
+        localStorage.clear()
+        window.location.replace('/')
       }
     }
   }
