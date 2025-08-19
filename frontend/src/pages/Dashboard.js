@@ -3,7 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
 import { supabase } from '../utils/supabase'
 import { useNavigate } from 'react-router-dom'
-import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame, Bell, X, Plus } from 'lucide-react'
+import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame, Bell, X, Plus, FileText } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { demoTests } from '../utils/demoData'
 import { getTranslation } from '../utils/i18n'
@@ -410,6 +410,31 @@ const Dashboard = () => {
                 <span className="text-xs text-gray-600 dark:text-gray-400 mt-1">{progress.percentage}% Complete</span>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mb-6">
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            <button
+              onClick={() => navigate('/notes')}
+              className="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-xl font-bold hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
+            >
+              <FileText className="h-5 w-5" />
+              <span>{language === 'mr' ? 'मोफत नोट्स' : 'Free Notes'}</span>
+            </button>
+            <button
+              onClick={() => {
+                const testsSection = document.querySelector('.grid.gap-4')
+                if (testsSection) {
+                  testsSection.scrollIntoView({ behavior: 'smooth' })
+                }
+              }}
+              className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-xl font-bold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
+            >
+              <BookOpen className="h-5 w-5" />
+              <span>{language === 'mr' ? 'टेस्ट सीरीज' : 'Test Series'}</span>
+            </button>
           </div>
         </div>
 

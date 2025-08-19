@@ -7,6 +7,7 @@ import { ThemeProvider } from './hooks/useTheme'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import TestPage from './pages/TestPage'
+import Notes from './pages/Notes'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminLogin from './pages/AdminLogin'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -56,6 +57,11 @@ function AppContent() {
           <Route path="/test/:testId" element={
             <ProtectedRoute>
               <TestPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/notes" element={
+            <ProtectedRoute>
+              <Notes />
             </ProtectedRoute>
           } />
           <Route path="/admin" element={<AdminLogin />} />
