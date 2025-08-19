@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
 import { signInWithGoogle } from '../utils/firebase'
-import { Shield, BookOpen, Calculator, Brain, MessageCircle, Youtube, Instagram, Send, Gift, Rocket } from 'lucide-react'
+import { Shield, BookOpen, Calculator, Brain, MessageCircle, Youtube, Instagram, Send, Gift, Rocket, Mail, User } from 'lucide-react'
 import toast from 'react-hot-toast'
 import LanguageToggle from '../components/LanguageToggle'
 import ThemeToggle from '../components/ThemeToggle'
@@ -153,6 +153,29 @@ const Home = () => {
             <div className="flex items-center space-x-2">
               <ThemeToggle />
               <LanguageToggle />
+              {!user ? (
+                <button
+                  onClick={handleGoogleSignIn}
+                  className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-green-500 text-white px-4 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  <Mail className="h-4 w-4" />
+                  <span className="text-sm font-medium">{language === 'mr' ? 'लॉगिन' : 'Login'}</span>
+                </button>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full border-2 border-blue-500"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      <User className="h-4 w-4" />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -173,18 +196,24 @@ const Home = () => {
           
           {/* Hero Cards */}
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-8 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform duration-300 animate-slide-in-left">
+            <button
+              onClick={handleGoogleSignIn}
+              className="bg-gradient-to-br from-blue-500 to-blue-600 p-8 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform duration-300 animate-slide-in-left text-center w-full"
+            >
               <div className="text-4xl mb-4 animate-bounce-gentle">📝</div>
               <h3 className="text-2xl font-bold mb-2">{language === 'mr' ? 'टेस्ट सीरीज' : 'Test Series'}</h3>
               <p className="text-blue-100 mb-4">{language === 'mr' ? '50 प्रश्न प्रति टेस्ट' : '50 questions per test'}</p>
               <div className="text-3xl font-bold">{language === 'mr' ? 'फक्त ₹10' : 'Only ₹10'}</div>
-            </div>
-            <div className="bg-gradient-to-br from-green-500 to-green-600 p-8 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform duration-300 animate-slide-in-right">
+            </button>
+            <button
+              onClick={handleGoogleSignIn}
+              className="bg-gradient-to-br from-green-500 to-green-600 p-8 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform duration-300 animate-slide-in-right text-center w-full"
+            >
               <div className="text-4xl mb-4 animate-bounce-gentle">📚</div>
               <h3 className="text-2xl font-bold mb-2">{language === 'mr' ? 'मोफत नोट्स' : 'Free Notes'}</h3>
               <p className="text-green-100 mb-4">{language === 'mr' ? 'सर्व विषयांची PDF' : 'PDF for all subjects'}</p>
               <div className="text-3xl font-bold">{language === 'mr' ? '100% मोफत' : '100% Free'}</div>
-            </div>
+            </button>
           </div>
         </section>
 
