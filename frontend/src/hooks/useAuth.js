@@ -89,46 +89,41 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     loading,
-    signOut: async () => {
-      try {
-        // Set logout flag immediately
-        sessionStorage.setItem('user_logged_out', 'true')
-        
-        // Clear user state immediately
-        setUser(null)
-        
-        // Firebase signout
-        if (auth) {
-          await auth.signOut()
+    signOut: () => {
+      // Set logout flag immediately
+      sessionStorage.setItem('user_logged_out', 'true')
+      
+      // Clear user state immediately
+      setUser(null)
+      
+      // Clear all user data immediately
+      localStorage.removeItem('demo_user')
+      localStorage.removeItem('user_purchases')
+      localStorage.removeItem('user_progress')
+      
+      // Clear any user-specific data
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('purchased_tests_') || key.startsWith('user_')) {
+          localStorage.removeItem(key)
         }
-        
-        // Supabase signout
-        if (supabase) {
-          await supabase.auth.signOut()
-        }
-        
-        // Clear all user data
-        localStorage.removeItem('demo_user')
-        localStorage.removeItem('user_purchases')
-        localStorage.removeItem('user_progress')
-        
-        // Clear any user-specific data
-        Object.keys(localStorage).forEach(key => {
-          if (key.startsWith('purchased_tests_') || key.startsWith('user_')) {
-            localStorage.removeItem(key)
+      })
+      
+      // Redirect immediately
+      window.location.replace('/')
+      
+      // Do async cleanup in background (non-blocking)
+      setTimeout(async () => {
+        try {
+          if (auth) {
+            await auth.signOut()
           }
-        })
-        
-        // Redirect to home and prevent back navigation
-        window.location.replace('/')
-      } catch (error) {
-        console.error('Sign out error:', error)
-        // Force logout even if there's an error
-        sessionStorage.setItem('user_logged_out', 'true')
-        setUser(null)
-        localStorage.clear()
-        window.location.replace('/')
-      }
+          if (supabase) {
+            await supabase.auth.signOut()
+          }
+        } catch (error) {
+          console.error('Background signout error:', error)
+        }
+      }, 0)
     }
   }
 
