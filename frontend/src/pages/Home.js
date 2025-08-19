@@ -141,11 +141,25 @@ const Home = () => {
         {/* Hero Section */}
         <div className="text-center space-y-3">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white leading-tight">
-            {getTranslation('heroTitle', language)}
+            {language === 'mr' ? 'पोलीस भरती परीक्षा + मोफत नोट्स' : 'Police Bharti Tests + Free Notes'}
           </h2>
           <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-            {language === 'mr' ? 'पोलीस भरती परीक्षेची तयारी फक्त ₹10 मध्ये - तत्काळ परिणाम, तज्ञ प्रश्न' : 'Prepare for Police Bharti exams with just ₹10 per test — instant results, expert questions'}
+            {language === 'mr' ? '₹10 मध्ये टेस्ट + मोफत अभ्यास सामग्री - संपूर्ण तयारी एकाच ठिकाणी' : '₹10 tests + Free study materials — Complete preparation in one place'}
           </p>
+        </div>
+
+        {/* Value Proposition */}
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-xl text-white text-center shadow-lg">
+            <div className="text-2xl mb-2">📝</div>
+            <h3 className="font-bold text-sm">{language === 'mr' ? 'टेस्ट सीरीज' : 'Test Series'}</h3>
+            <p className="text-xs text-blue-100 mt-1">{language === 'mr' ? 'फक्त ₹10' : 'Only ₹10'}</p>
+          </div>
+          <div className="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-xl text-white text-center shadow-lg">
+            <div className="text-2xl mb-2">📚</div>
+            <h3 className="font-bold text-sm">{language === 'mr' ? 'मोफत नोट्स' : 'Free Notes'}</h3>
+            <p className="text-xs text-green-100 mt-1">{language === 'mr' ? '100% मोफत' : '100% Free'}</p>
+          </div>
         </div>
 
         {/* Features Section */}
@@ -153,26 +167,26 @@ const Home = () => {
           <div className="flex items-center justify-center">
             <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
             <h3 className="px-4 text-sm font-bold text-gray-900 dark:text-white">
-              {language === 'mr' ? 'वैशिष्ट्ये' : 'Features'}
+              {language === 'mr' ? 'वैशिष्ट्ये' : 'What You Get'}
             </h3>
             <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-              <div className="text-lg mb-1">📚</div>
-              <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? '50 प्रश्न' : '50 Questions'}</h4>
+              <div className="text-lg mb-1">📝</div>
+              <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? 'प्रैक्टिस टेस्ट' : 'Practice Tests'}</h4>
+            </div>
+            <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+              <div className="text-lg mb-1">📖</div>
+              <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? 'अभ्यास नोट्स' : 'Study Notes'}</h4>
             </div>
             <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 text-center">
               <div className="text-lg mb-1">⚡</div>
               <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? 'त्वरित परिणाम' : 'Instant Results'}</h4>
             </div>
             <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-              <div className="text-lg mb-1">👨🏫</div>
-              <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? 'तज्ञ सामग्री' : 'Expert Content'}</h4>
-            </div>
-            <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-              <div className="text-lg mb-1">💰</div>
-              <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? 'फक्त ₹10' : 'Only ₹10'}</h4>
+              <div className="text-lg mb-1">📱</div>
+              <h4 className="font-medium text-gray-900 dark:text-white text-xs">{language === 'mr' ? 'मोबाइल फ्रेंडली' : 'Mobile Friendly'}</h4>
             </div>
           </div>
         </div>
@@ -198,7 +212,7 @@ const Home = () => {
                 onClick={handleGoogleSignIn}
                 className="w-full bg-white text-blue-600 py-4 px-6 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-blue-50"
               >
-                {language === 'mr' ? '🚀 मोफत सुरुवात करा' : '🚀 Start Free Test'}
+                {language === 'mr' ? '🚀 टेस्ट + नोट्स मिळवा' : '🚀 Get Tests + Notes'}
               </button>
             </div>
           </div>
