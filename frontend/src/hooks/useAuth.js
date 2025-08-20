@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../utils/supabase'
 import { auth } from '../utils/firebase'
 import { onAuthStateChanged, getRedirectResult } from 'firebase/auth'
+import { trackUserLogin } from '../utils/userTracking'
+import { migrateExistingUser } from '../utils/migrateExistingUsers'
 
 const AuthContext = createContext()
 
@@ -42,12 +44,19 @@ export const AuthProvider = ({ children }) => {
       if (firebaseUser) {
         // Clear logout flag when user logs in
         sessionStorage.removeItem('user_logged_out')
-        setUser({
+        const userData = {
           id: firebaseUser.uid,
           email: firebaseUser.email,
           name: firebaseUser.displayName,
           avatar: firebaseUser.photoURL
-        })
+        }
+        setUser(userData)
+        
+        // Migrate existing user if needed
+        migrateExistingUser(userData)
+        
+        // Track login
+        trackUserLogin(firebaseUser.uid, firebaseUser.email, 'google')
       } else {
         // Check if user was logged out
         const isLoggedOut = sessionStorage.getItem('user_logged_out')

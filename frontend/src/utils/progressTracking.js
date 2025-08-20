@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { trackTestAttempt } from './userTracking'
 
 // Get user progress for all categories
 export const getUserProgress = async (userId) => {
@@ -209,7 +210,10 @@ export const getUserStats = async (userId) => {
 }
 
 // Record test completion
-export const recordTestCompletion = async (userId, testId, score, totalQuestions) => {
+export const recordTestCompletion = async (userId, testId, score, totalQuestions, timeSpent = 0) => {
+  // Track test attempt in Supabase
+  await trackTestAttempt(userId, testId, `Test ${testId}`, score, totalQuestions, timeSpent)
+  
   if (!supabase) {
     console.log('Demo mode: Test completion recorded locally')
     // Store in localStorage for demo mode

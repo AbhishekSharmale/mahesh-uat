@@ -4,7 +4,6 @@ import { Toaster } from 'react-hot-toast'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import { LanguageProvider } from './hooks/useLanguage'
 import { ThemeProvider } from './hooks/useTheme'
-import { analytics, performanceMonitor } from './utils/analytics'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import TestPage from './pages/TestPage'
@@ -18,12 +17,6 @@ import Footer from './components/Footer'
 
 function App() {
   console.log('App component rendering')
-  
-  // Track page load performance
-  React.useEffect(() => {
-    performanceMonitor.measurePageLoad()
-    analytics.trackPageView('app_loaded')
-  }, [])
   
   return (
     <ErrorBoundary>
@@ -81,17 +74,7 @@ function AppContent() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
         <Footer />
-        <Toaster 
-          position="top-center"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: '#363636',
-              color: '#fff',
-              zIndex: 9999
-            },
-          }}
-        />
+        <Toaster position="top-center" />
       </div>
     </Router>
   )

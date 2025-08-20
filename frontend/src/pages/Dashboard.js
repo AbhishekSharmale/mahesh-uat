@@ -3,12 +3,10 @@ import { useAuth } from '../hooks/useAuth'
 import { useLanguage } from '../hooks/useLanguage'
 import { supabase } from '../utils/supabase'
 import { useNavigate } from 'react-router-dom'
-import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Flame, Bell, X, Plus, FileText, Play, Bookmark } from 'lucide-react'
+import { BookOpen, Trophy, User, LogOut, CreditCard, Clock, Award, Heart, Flame, Bell, X, Plus, FileText, Play } from 'lucide-react'
 import LanguageToggle from '../components/LanguageToggle'
 import ThemeToggle from '../components/ThemeToggle'
-import PWAInstallPrompt from '../components/PWAInstallPrompt'
-import { analytics } from '../utils/analytics'
-import { toggleBookmark, isBookmarked } from '../utils/bookmarks'
+import { trackPayment } from '../utils/userTracking'
 import toast from 'react-hot-toast'
 import { demoTests } from '../utils/demoData'
 import { getTranslation } from '../utils/i18n'
@@ -25,7 +23,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedDifficulty, setSelectedDifficulty] = useState('all')
-  // Remove unused favoriteTests state since we're using bookmarks now
+  const [favoriteTests, setFavoriteTests] = useState(new Set())
   const [showNotification, setShowNotification] = useState(true)
 
   const categories = [
@@ -59,16 +57,7 @@ const Dashboard = () => {
   const [recentTestsData, setRecentTestsData] = useState([])
   const [showWalletModal, setShowWalletModal] = useState(false)
 
-  // Track page view and initialize bookmarks
-  useEffect(() => {
-    analytics.trackPageView('dashboard')
-  }, [])
 
-  const handleBookmarkToggle = (testId, testTitle) => {
-    const userId = user?.id || 'demo-user-123'
-    const wasBookmarked = toggleBookmark(userId, testId, testTitle)
-    toast.success(wasBookmarked ? 'Test bookmarked!' : 'Bookmark removed!')
-  }
 
   useEffect(() => {
     fetchUserProfile()
@@ -250,6 +239,9 @@ const Dashboard = () => {
 
       // Record the purchase
       purchaseTest(userId, testId, price)
+      
+      // Track payment
+      trackPayment(userId, testId, price, 'wallet', 'completed')
 
       // Navigate to test
       navigate(`/test/${testId}`)
@@ -572,14 +564,22 @@ const Dashboard = () => {
                 
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => handleBookmarkToggle(test.id, test.title)}
+                    onClick={() => setFavoriteTests(prev => {
+                      const newFavorites = new Set(prev)
+                      if (newFavorites.has(test.id)) {
+                        newFavorites.delete(test.id)
+                      } else {
+                        newFavorites.add(test.id)
+                      }
+                      return newFavorites
+                    })}
                     className={`p-3 rounded-xl transition-all duration-200 ${
-                      isBookmarked(user?.id || 'demo-user-123', test.id)
-                        ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-400' 
+                      favoriteTests.has(test.id) 
+                        ? 'bg-red-100 text-red-500 dark:bg-red-900 dark:text-red-400' 
                         : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'
                     }`}
                   >
-                    <Bookmark className={`h-5 w-5 ${isBookmarked(user?.id || 'demo-user-123', test.id) ? 'fill-current' : ''}`} />
+                    <Heart className={`h-5 w-5 ${favoriteTests.has(test.id) ? 'fill-current' : ''}`} />
                   </button>
                   <button
                     onClick={() => handleBuyTest(test.id, test.price)}
@@ -681,9 +681,6 @@ const Dashboard = () => {
         user={user}
         onBalanceUpdate={handleBalanceUpdate}
       />
-      
-      {/* PWA Install Prompt */}
-      <PWAInstallPrompt />
     </div>
   )
 }
