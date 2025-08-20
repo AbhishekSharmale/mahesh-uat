@@ -54,21 +54,45 @@ ALTER TABLE user_logins ENABLE ROW LEVEL SECURITY;
 ALTER TABLE test_attempts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 
--- Create RLS policies (users can only see their own data)
-CREATE POLICY "Users can view own logins" ON user_logins
-  FOR SELECT USING (auth.uid()::text = user_id);
+-- Disable RLS for now (since using Firebase auth, not Supabase auth)
+ALTER TABLE user_logins DISABLE ROW LEVEL SECURITY;
+ALTER TABLE test_attempts DISABLE ROW LEVEL SECURITY;
+ALTER TABLE payments DISABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can insert own logins" ON user_logins
-  FOR INSERT WITH CHECK (auth.uid()::text = user_id);
+-- Create missing tables that the app expects
+CREATE TABLE IF NOT EXISTS profiles (
+  id TEXT PRIMARY KEY,
+  email TEXT,
+  name TEXT,
+  wallet_balance DECIMAL(10,2) DEFAULT 0,
+  tests_taken INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 
-CREATE POLICY "Users can view own test attempts" ON test_attempts
-  FOR SELECT USING (auth.uid()::text = user_id);
+CREATE TABLE IF NOT EXISTS test_results (
+  id BIGSERIAL PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  test_id TEXT NOT NULL,
+  score INTEGER NOT NULL,
+  total_questions INTEGER NOT NULL,
+  completed_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
-CREATE POLICY "Users can insert own test attempts" ON test_attempts
-  FOR INSERT WITH CHECK (auth.uid()::text = user_id);
+CREATE TABLE IF NOT EXISTS tests (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  category TEXT NOT NULL,
+  questions JSONB,
+  price DECIMAL(10,2) DEFAULT 0,
+  published BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
-CREATE POLICY "Users can view own payments" ON payments
-  FOR SELECT USING (auth.uid()::text = user_id);
-
-CREATE POLICY "Users can insert own payments" ON payments
-  FOR INSERT WITH CHECK (auth.uid()::text = user_id);
+-- Create indexes for new tables
+CREATE INDEX idx_profiles_id ON profiles(id);
+CREATE INDEX idx_test_results_user_id ON test_results(user_id);
+CREATE INDEX idx_test_results_completed_at ON test_results(completed_at);
+CREATE INDEX idx_tests_category ON tests(category);
+CREATE INDEX idx_tests_published ON tests(published);

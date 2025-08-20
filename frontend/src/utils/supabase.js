@@ -15,7 +15,36 @@ const isValidUrl = (url) => {
 
 const isDemoMode = !supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('your_') || !isValidUrl(supabaseUrl)
 
-export const supabase = isDemoMode ? null : createClient(supabaseUrl, supabaseAnonKey)
+// Create Supabase client with custom auth
+let supabaseClient = null
+if (!isDemoMode) {
+  supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    },
+    global: {
+      headers: {
+        'Authorization': `Bearer ${supabaseAnonKey}`
+      }
+    }
+  })
+}
+
+export const supabase = supabaseClient
+
+// Function to set Firebase token for Supabase requests
+export const setFirebaseToken = async (firebaseUser) => {
+  if (!supabase || !firebaseUser) return
+  
+  try {
+    const token = await firebaseUser.getIdToken()
+    supabase.rest.headers['Authorization'] = `Bearer ${token}`
+    console.log('Firebase token set for Supabase requests')
+  } catch (error) {
+    console.error('Error setting Firebase token:', error)
+  }
+}
 
 // Auth helpers
 export const signInWithGoogle = async () => {
@@ -29,13 +58,10 @@ export const signInWithGoogle = async () => {
     window.location.href = '/dashboard'
     return { data: {}, error: null }
   }
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${window.location.origin}/dashboard`
-    }
-  })
-  return { data, error }
+  
+  // Use Firebase auth instead of Supabase auth
+  console.log('Use Firebase signInWithGoogle from firebase.js instead')
+  return { data: {}, error: null }
 }
 
 export const signOut = async () => {

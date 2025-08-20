@@ -4,6 +4,7 @@ import { auth } from '../utils/firebase'
 import { onAuthStateChanged, getRedirectResult } from 'firebase/auth'
 import { trackUserLogin } from '../utils/userTracking'
 import { migrateExistingUser } from '../utils/migrateExistingUsers'
+import { setFirebaseToken } from '../utils/supabase'
 
 const AuthContext = createContext()
 
@@ -51,6 +52,9 @@ export const AuthProvider = ({ children }) => {
           avatar: firebaseUser.photoURL
         }
         setUser(userData)
+        
+        // Set Firebase token for Supabase
+        setFirebaseToken(firebaseUser)
         
         // Migrate existing user if needed
         migrateExistingUser(userData)
