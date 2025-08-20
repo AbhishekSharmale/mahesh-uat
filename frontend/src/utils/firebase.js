@@ -11,19 +11,27 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 }
 
+// Debug logging
+console.log('Firebase Config Debug:', {
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY ? 'Set' : 'Missing',
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN ? 'Set' : 'Missing',
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID ? 'Set' : 'Missing'
+})
+
 let app = null
 let auth = null
 
 try {
+  console.log('Attempting Firebase initialization...')
   if (firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId) {
     app = initializeApp(firebaseConfig)
     auth = getAuth(app)
-    console.log('Firebase initialized successfully')
+    console.log('✅ Firebase initialized successfully')
   } else {
-    console.warn('Missing Firebase config values')
+    console.warn('❌ Missing Firebase config values:', firebaseConfig)
   }
 } catch (error) {
-  console.error('Firebase initialization failed:', error)
+  console.error('❌ Firebase initialization failed:', error)
 }
 
 export { auth }
